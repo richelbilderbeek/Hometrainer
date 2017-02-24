@@ -11,7 +11,7 @@
 
 #pragma GCC diagnostic pop
 
-ribi::HometrainerResources::HometrainerResources()
+ribi::HometrainerResources::HometrainerResources() //!OCLINT not now
 {
   {
     const std::vector<std::string> files
