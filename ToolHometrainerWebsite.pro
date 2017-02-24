@@ -44,11 +44,6 @@ include(../RibiClasses/CppContainer/CppContainer.pri)
 include(../RibiClasses/CppFuzzy_equal_to/CppFuzzy_equal_to.pri)
 include(../RibiClasses/CppImageCanvas/CppImageCanvas.pri)
 include(../RibiClasses/CppTribool/CppTribool.pri)
-
-include(CppWtExercise/CppWtExercise.pri)
-include(CppWtMultipleChoiceQuestionDialog/CppWtMultipleChoiceQuestionDialog.pri)
-include(CppWtOpenQuestionDialog/CppWtOpenQuestionDialog.pri)
-include(CppWtQuestionDialog/CppWtQuestionDialog.pri)
 include(../RibiClasses/CppWtSelectFileDialog/CppWtSelectFileDialog.pri)
 
 include(ToolHometrainerWebsite.pri)
