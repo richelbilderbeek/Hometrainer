@@ -1,18 +1,14 @@
-INCLUDEPATH += \
-    ../../Tools/ToolHometrainer
+INCLUDEPATH += ../Hometrainer
 
 SOURCES += \
-    ../../Tools/ToolHometrainer/hometrainermaindialog.cpp \
-    ../../Tools/ToolHometrainer/hometrainermenudialog.cpp \
-    ../../Tools/ToolHometrainer/hometrainerresources.cpp
+    $$PWD/hometrainermaindialog.cpp \
+    $$PWD/hometrainermenudialog.cpp \
+    $$PWD/hometrainerresources.cpp
 
 HEADERS  += \
-    ../../Tools/ToolHometrainer/hometrainermaindialog.h \
-    ../../Tools/ToolHometrainer/hometrainermenudialog.h \
-    ../../Tools/ToolHometrainer/hometrainerresources.h
+    $$PWD/hometrainermaindialog.h \
+    $$PWD/hometrainermenudialog.h \
+    $$PWD/hometrainerresources.h
 
 RESOURCES += \
-    ../../Tools/ToolHometrainer/ToolHometrainer.qrc
-
-OTHER_FILES += \
-    ../../Tools/ToolHometrainer/Licence.txt
+    $$PWD/ToolHometrainer.qrc

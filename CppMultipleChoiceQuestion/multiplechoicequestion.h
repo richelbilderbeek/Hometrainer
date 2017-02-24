@@ -1,24 +1,3 @@
-//---------------------------------------------------------------------------
-/*
-MultipleChoiceQuestion, class for a multiple choice question
-Copyright (C) 2011-2015 Richel Bilderbeek
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-//---------------------------------------------------------------------------
-// From http://www.richelbilderbeek.nl/CppMultipleChoiceQuestion
-//---------------------------------------------------------------------------
 #ifndef MULTIPLECHOICEQUESTION_H
 #define MULTIPLECHOICEQUESTION_H
 
@@ -51,14 +30,9 @@ struct MultipleChoiceQuestion : public Question
   ///Obtain an example multiple choice question
   static std::string GetExampleMultipleChoiceQuestion() noexcept { return "-,1+1=,2,0,4"; }
 
-  ///Obtain valid multiple choice question
-  static std::vector<std::string> GetInvalidMultipleChoiceQuestions() noexcept;
-
   ///Obtain the possible options to be chosen in a random order
   const std::vector<std::string>& GetOptions() const noexcept;
 
-  ///Obtain valid multiple choice question
-  static std::vector<std::string> GetValidMultipleChoiceQuestions() noexcept;
 
   ///Obtain the version
   static std::string GetVersion() noexcept;
@@ -99,11 +73,16 @@ struct MultipleChoiceQuestion : public Question
   static std::vector<std::string> ExtractWrongAnswers(
     const std::string& input);
 
-  #ifndef NDEBUG
-  static void Test() noexcept;
-  #endif
 
 };
+
+///Obtain valid multiple choice question
+std::vector<std::string> GetInvalidMultipleChoiceQuestions() noexcept;
+
+///Obtain valid multiple choice question
+std::vector<std::string> GetValidMultipleChoiceQuestions() noexcept;
+
+void TestMultipleChoiceQuestion() noexcept;
 
 } //~namespace ribi
 

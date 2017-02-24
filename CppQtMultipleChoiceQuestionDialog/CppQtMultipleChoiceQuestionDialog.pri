@@ -1,15 +1,8 @@
-INCLUDEPATH += \
-    ../RibiClasses/CppQtMultipleChoiceQuestionDialog
+INCLUDEPATH += $$PWD
 
-SOURCES += \
-    ../RibiClasses/CppQtMultipleChoiceQuestionDialog/qtmultiplechoicequestiondialog.cpp
+SOURCES += $$PWD/qtmultiplechoicequestiondialog.cpp
 
-HEADERS  += \
-    ../RibiClasses/CppQtMultipleChoiceQuestionDialog/qtmultiplechoicequestiondialog.h
+HEADERS  += $$PWD/qtmultiplechoicequestiondialog.h
 
-FORMS += \
-    ../RibiClasses/CppQtMultipleChoiceQuestionDialog/qtmultiplechoicequestiondialog.ui
-
-OTHER_FILES += \
-    ../RibiClasses/CppQtMultipleChoiceQuestionDialog/Licence.txt
+FORMS += $$PWD/qtmultiplechoicequestiondialog.ui
 

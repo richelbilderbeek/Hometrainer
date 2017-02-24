@@ -4,14 +4,12 @@
 
 #include "openquestiondialog.h"
 #include "openquestionfactory.h"
-#include "testtimer.h"
-#include "trace.h"
+
+
 
 ribi::OpenQuestionDialogFactory::OpenQuestionDialogFactory()
 {
-  #ifndef NDEBUG
-  Test();
-  #endif
+
 }
 
 
@@ -70,17 +68,8 @@ std::vector<std::string> ribi::OpenQuestionDialogFactory::GetVersionHistory() no
   };
 }
 
-#ifndef NDEBUG
-void ribi::OpenQuestionDialogFactory::Test() noexcept
+void ribi::TestOpenQuestionDialogFactory() noexcept
 {
-  {
-    static bool is_tested{false};
-    if (is_tested) return;
-    is_tested = true;
-  }
-  OpenQuestionFactory();
-  OpenQuestionDialogFactory().GetTestOpenQuestionDialogs();
-  const TestTimer test_timer(__func__,__FILE__,1.0);
   //Test setting the open questions
   for(const std::string& s: OpenQuestionFactory().GetValidOpenQuestionStrings())
   {
@@ -88,4 +77,3 @@ void ribi::OpenQuestionDialogFactory::Test() noexcept
     assert(q);
   }
 }
-#endif

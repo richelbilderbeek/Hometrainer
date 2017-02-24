@@ -1,12 +1,9 @@
-INCLUDEPATH += \
-    ../RibiClasses/CppMultipleChoiceQuestion
+INCLUDEPATH += $$PWD
 
 SOURCES += \
-    ../RibiClasses/CppMultipleChoiceQuestion/multiplechoicequestion.cpp
+    $$PWD/multiplechoicequestion.cpp
 
 HEADERS  += \
-    ../RibiClasses/CppMultipleChoiceQuestion/multiplechoicequestion.h
+    $$PWD/multiplechoicequestion.h
 
-OTHER_FILES += \
-    ../RibiClasses/CppMultipleChoiceQuestion/Licence.txt
 

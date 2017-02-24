@@ -1,23 +1,3 @@
-//---------------------------------------------------------------------------
-/*
-Hometrainer, exercise and survey suite
-Copyright (C) 2009-2015 Richel Bilderbeek
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details.
-You should have received a copy of the GNU General Public License
-along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
-//---------------------------------------------------------------------------
-//From http://www.richelbilderbeek.nl/ToolHometrainer.htm
-//---------------------------------------------------------------------------
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
 #pragma GCC diagnostic ignored "-Wunused-local-typedefs"
@@ -37,9 +17,6 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "hometrainerresources.h"
 #include "question.h"
 #include "questiondialog.h"
-#include "richelbilderbeekprogram.h"
-#include "testtimer.h"
-#include "trace.h"
 
 #include <QFile>
 
@@ -47,9 +24,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 ribi::HometrainerMenuDialog::HometrainerMenuDialog()
 {
-  #ifndef NDEBUG
-  Test();
-  #endif
+
 }
 
 void ribi::HometrainerMenuDialog::CreateExamples() noexcept
@@ -109,7 +84,6 @@ ribi::About ribi::HometrainerMenuDialog::GetAbout() const noexcept
   a.AddLibrary("OpenQuestionDialog version: " + OpenQuestionDialog::GetVersion());
   a.AddLibrary("Question version: " + Question::GetVersion());
   a.AddLibrary("QuestionDialog version: " + QuestionDialog::GetVersion());
-  a.AddLibrary("Trace version: " + Trace::GetVersion());
   return a;
 }
 
@@ -128,13 +102,6 @@ ribi::Help ribi::HometrainerMenuDialog::GetHelp() const noexcept
       "Hometrainer -my_exercise.txt"
     }
   );
-}
-
-boost::shared_ptr<const ribi::Program> ribi::HometrainerMenuDialog::GetProgram() const noexcept
-{
-  const boost::shared_ptr<const ribi::Program> p(new ProgramHometrainer);
-  assert(p);
-  return p;
 }
 
 std::string ribi::HometrainerMenuDialog::GetVersion() const noexcept
@@ -160,21 +127,9 @@ std::vector<std::string> ribi::HometrainerMenuDialog::GetVersionHistory() const 
   };
 }
 
-#ifndef NDEBUG
-void ribi::HometrainerMenuDialog::Test() noexcept
+void ribi::TestHometrainerMenuDialog() noexcept
 {
-  {
-    static bool is_tested{false};
-    if (is_tested) return;
-    is_tested = true;
-  }
-  Container();
-  HometrainerResources();
-  HometrainerMainDialog(HometrainerResources().GetExerciseClouds());
-  const TestTimer test_timer(__func__,__FILE__,1.0);
-
   HometrainerMenuDialog().Execute( { "Hometrainer", "-e" } );
   const HometrainerMainDialog d(HometrainerResources().GetExerciseClouds());
   assert(d.GetNumberCorrect() == 0);
 }
-#endif

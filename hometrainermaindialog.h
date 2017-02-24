@@ -58,16 +58,6 @@ struct HometrainerMainDialog
   ///Does the user want to quit?
   bool m_quit;
 
-  ///Create a Question from a std::string
-  ///Returns nullptr if the string cannot be converted to a question
-  static const boost::shared_ptr<const Question > CreateQuestion(
-    const std::string& s) noexcept;
-
-  ///Build the correct dialog for a (derived class of) question
-  static boost::shared_ptr<QuestionDialog> CreateQuestionDialog(
-    boost::shared_ptr<const Question> question) noexcept;
-
-
   static std::vector<boost::shared_ptr<const Question>> CreateQuestions(
     const std::string& filename);
 
@@ -82,10 +72,17 @@ struct HometrainerMainDialog
   ///Respond to the user submitting an answer
   void OnSubmitted(const bool is_correct) noexcept;
 
-  #ifndef NDEBUG
-  static void Test() noexcept;
-  #endif
 };
+
+///Create a Question from a std::string
+///Returns nullptr if the string cannot be converted to a question
+boost::shared_ptr<const Question > CreateQuestion(const std::string& s) noexcept;
+
+///Build the correct dialog for a (derived class of) question
+boost::shared_ptr<QuestionDialog> CreateQuestionDialog(
+  boost::shared_ptr<const Question> question) noexcept;
+
+void TestHometrainerMainDialog() noexcept;
 
 } //namespace ribi
 

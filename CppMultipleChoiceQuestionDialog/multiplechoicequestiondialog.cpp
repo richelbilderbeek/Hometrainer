@@ -29,8 +29,8 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 
 #include "multiplechoicequestion.h"
 #include "question.h"
-#include "testtimer.h"
-#include "trace.h"
+
+
 #pragma GCC diagnostic pop
 
 ribi::MultipleChoiceQuestionDialog::MultipleChoiceQuestionDialog(
@@ -40,9 +40,6 @@ ribi::MultipleChoiceQuestionDialog::MultipleChoiceQuestionDialog(
     m_answer_in_progress{-1},
     m_question(question)
 {
-  #ifndef NDEBUG
-  Test();
-  #endif
   assert(GetQuestion());
   assert(!HasSubmitted());
 }
@@ -53,9 +50,6 @@ ribi::MultipleChoiceQuestionDialog::MultipleChoiceQuestionDialog(const std::stri
     m_answer_in_progress{-1},
     m_question(new MultipleChoiceQuestion(question))
 {
-  #ifndef NDEBUG
-  Test();
-  #endif
   assert(!HasSubmitted());
   assert(GetQuestion());
 }
@@ -125,17 +119,10 @@ void ribi::MultipleChoiceQuestionDialog::Submit(const std::string& s)
   }
 }
 
-#ifndef NDEBUG
-void ribi::MultipleChoiceQuestionDialog::Test() noexcept
+void ribi::TestMultipleChoiceQuestionDialog() noexcept
 {
-  {
-    static bool is_tested{false};
-    if (is_tested) return;
-    is_tested = true;
-  }
-  const TestTimer test_timer(__func__,__FILE__,1.0);
   //Test setting the multiple choice questions
-  for(const std::string& s: MultipleChoiceQuestion::GetValidMultipleChoiceQuestions())
+  for(const std::string& s: GetValidMultipleChoiceQuestions())
   {
     const boost::shared_ptr<MultipleChoiceQuestion> q {
       new MultipleChoiceQuestion(s)
@@ -154,7 +141,7 @@ void ribi::MultipleChoiceQuestionDialog::Test() noexcept
   //Test submitting correct and incorrect answers to this dialog
   {
     const std::vector<std::string> valid {
-      MultipleChoiceQuestion::GetValidMultipleChoiceQuestions()
+      GetValidMultipleChoiceQuestions()
     };
     for (const std::string& s: valid)
     {
@@ -213,7 +200,6 @@ void ribi::MultipleChoiceQuestionDialog::Test() noexcept
     }
   }
 }
-#endif
 
 std::string ribi::MultipleChoiceQuestionDialog::ToStr() const noexcept
 {

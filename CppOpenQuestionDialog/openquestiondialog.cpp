@@ -29,8 +29,8 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 
 #include "openquestion.h"
 #include "openquestiondialogfactory.h"
-#include "testtimer.h"
-#include "trace.h"
+
+
 #pragma GCC diagnostic pop
 
 ribi::OpenQuestionDialog::OpenQuestionDialog()
@@ -38,23 +38,8 @@ ribi::OpenQuestionDialog::OpenQuestionDialog()
     m_answer_in_progress{},
     m_open_question{}
 {
-  #ifndef NDEBUG
-  Test();
-  #endif
-}
 
-/*
-ribi::OpenQuestionDialog::OpenQuestionDialog(const boost::shared_ptr<const OpenQuestion>& question)
-  : m_open_question(question)
-{
-  #ifndef NDEBUG
-  Test();
-  #endif
-  assert(question);
-  assert(!HasSubmitted());
-  assert(GetQuestion());
 }
-*/
 
 boost::shared_ptr<const ribi::Question> ribi::OpenQuestionDialog::GetQuestion() const noexcept
 {
@@ -107,25 +92,14 @@ void ribi::OpenQuestionDialog::Submit(const std::string& s)
   //this->m_signal_submitted(this);
 }
 
-#ifndef NDEBUG
-void ribi::OpenQuestionDialog::Test() noexcept
+void ribi::TestOpenQuestionDialog() noexcept
 {
-  {
-    static bool is_tested{false};
-    if (is_tested) return;
-    is_tested = true;
-  }
-  {
-    OpenQuestionDialogFactory();
-  }
-  const TestTimer test_timer(__func__,__FILE__,1.0);
   //Test setting the open questions
   for(const auto dialog: OpenQuestionDialogFactory().GetTestOpenQuestionDialogs())
   {
     assert(!dialog->HasSubmitted());
   }
 }
-#endif
 
 std::string ribi::OpenQuestionDialog::ToStr() const noexcept
 {

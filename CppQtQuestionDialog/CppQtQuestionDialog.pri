@@ -1,12 +1,8 @@
-INCLUDEPATH += \
-    ../RibiClasses/CppQtQuestionDialog
+INCLUDEPATH += $$PWD
 
 SOURCES += \
-    ../RibiClasses/CppQtQuestionDialog/qtquestiondialog.cpp
+    $$PWD/qtquestiondialog.cpp
 
 HEADERS  += \
-    ../RibiClasses/CppQtQuestionDialog/qtquestiondialog.h
-
-OTHER_FILES += \
-    ../RibiClasses/CppQtQuestionDialog/Licence.txt
+    $$PWD/qtquestiondialog.h
 

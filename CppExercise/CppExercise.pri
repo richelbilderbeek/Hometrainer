@@ -1,11 +1,7 @@
-INCLUDEPATH += \
-    ../RibiClasses/CppExercise
+INCLUDEPATH += $$PWD
 
 SOURCES += \
-    ../RibiClasses/CppExercise/exercise.cpp
+    $$PWD/exercise.cpp
 
 HEADERS  += \
-    ../RibiClasses/CppExercise/exercise.h
-
-OTHER_FILES += \
-    ../RibiClasses/CppExercise/Licence.txt
+    $$PWD/exercise.h

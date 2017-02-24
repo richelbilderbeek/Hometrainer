@@ -1,26 +1,70 @@
-include(../../DesktopApplication.pri)
-include(../../Libraries/Boost.pri)
+# C++14
+CONFIG += c++14
+QMAKE_CXX = g++-5
+QMAKE_LINK = g++-5
+QMAKE_CC = gcc-5
+# Qt and Qwt do not go well with -Weffc++
+QMAKE_CXXFLAGS += -std=c++14 -Wall -Wextra -Wnon-virtual-dtor -pedantic -Wshadow -Werror
 
-include(../../Libraries/GeneralConsole.pri)
-include(../../Libraries/GeneralDesktop.pri)
+# Debug and release mode
+CONFIG += debug_and_release
 
-#Specific
-include(../../Classes/CppRectangle/CppRectangle.pri)
-include(../../Classes/CppCanvas/CppCanvas.pri)
-include(../../Classes/CppContainer/CppContainer.pri)
-include(../../Classes/CppDotMatrix/CppDotMatrix.pri)
-include(../../Classes/CppExercise/CppExercise.pri)
-include(../../Classes/CppImageCanvas/CppImageCanvas.pri)
-include(../../Classes/CppMultipleChoiceQuestion/CppMultipleChoiceQuestion.pri)
-include(../../Classes/CppMultipleChoiceQuestionDialog/CppMultipleChoiceQuestionDialog.pri)
-include(../../Classes/CppOpenQuestion/CppOpenQuestion.pri)
-include(../../Classes/CppOpenQuestionDialog/CppOpenQuestionDialog.pri)
-include(../../Classes/CppQtMultipleChoiceQuestionDialog/CppQtMultipleChoiceQuestionDialog.pri)
-include(../../Classes/CppQtOpenQuestionDialog/CppQtOpenQuestionDialog.pri)
-include(../../Classes/CppQtQuestionDialog/CppQtQuestionDialog.pri)
-include(../../Classes/CppQuestion/CppQuestion.pri)
-include(../../Classes/CppQuestionDialog/CppQuestionDialog.pri)
-include(../../Classes/CppTribool/CppTribool.pri)
+# In release mode, define NDEBUG
+CONFIG(release, debug|release) {
+  DEFINES += NDEBUG
+}
+
+# In debug mode, turn on gcov and UBSAN
+CONFIG(debug, debug|release) {
+
+  # gcov
+  QMAKE_CXXFLAGS += -fprofile-arcs -ftest-coverage
+  LIBS += -lgcov
+
+  # UBSAN
+  QMAKE_CXXFLAGS += -fsanitize=undefined
+  QMAKE_LFLAGS += -fsanitize=undefined
+  LIBS += -lubsan
+}
+
+# Qt4 and Qt5
+QT += core gui
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+# Prevent Qt for failing with this error:
+# qrc_[*].cpp:400:44: error: ‘qInitResources_[*]__init_variable__’ defined but not used
+# [*]: the resource filename
+QMAKE_CXXFLAGS += -Wno-unused-variable
+
+# Prevents this error:
+#/usr/include/boost/math/constants/constants.hpp:277: error: unable to find numeric literal operator 'operator""Q'
+#   BOOST_DEFINE_MATH_CONSTANT(half, 5.000000000000000000000000000000000000e-01, "5.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e-01")
+#   ^
+QMAKE_CXXFLAGS += -fext-numeric-literals
+
+include(../RibiClasses/CppAbout/CppAbout.pri)
+include(../RibiClasses/CppFileIo/CppFileIo.pri)
+include(../RibiClasses/CppFuzzy_equal_to/CppFuzzy_equal_to.pri)
+include(../RibiClasses/CppHelp/CppHelp.pri)
+include(../RibiClasses/CppMenuDialog/CppMenuDialog.pri)
+include(../RibiClasses/CppQtAboutDialog/CppQtAboutDialog.pri)
+include(../RibiClasses/CppQtHideAndShowDialog/CppQtHideAndShowDialog.pri)
+include(../RibiClasses/CppRectangle/CppRectangle.pri)
+include(../RibiClasses/CppCanvas/CppCanvas.pri)
+include(../RibiClasses/CppContainer/CppContainer.pri)
+include(../DotMatrix/DotMatrix.pri)
+include(CppExercise/CppExercise.pri)
+include(../RibiClasses/CppImageCanvas/CppImageCanvas.pri)
+include(CppMultipleChoiceQuestion/CppMultipleChoiceQuestion.pri)
+include(CppMultipleChoiceQuestionDialog/CppMultipleChoiceQuestionDialog.pri)
+include(CppOpenQuestion/CppOpenQuestion.pri)
+include(CppOpenQuestionDialog/CppOpenQuestionDialog.pri)
+include(CppQtMultipleChoiceQuestionDialog/CppQtMultipleChoiceQuestionDialog.pri)
+include(CppQtOpenQuestionDialog/CppQtOpenQuestionDialog.pri)
+include(CppQtQuestionDialog/CppQtQuestionDialog.pri)
+include(CppQuestion/CppQuestion.pri)
+include(CppQuestionDialog/CppQuestionDialog.pri)
+include(../RibiClasses/CppTribool/CppTribool.pri)
 
 include(ToolHometrainerDesktop.pri)
 

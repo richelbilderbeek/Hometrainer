@@ -20,17 +20,15 @@
 #include "questiondialog.h"
 #include "multiplechoicequestion.h"
 #include "multiplechoicequestiondialog.h"
-#include "testtimer.h"
-#include "trace.h"
+
+
 #pragma GCC diagnostic pop
 
 ribi::HometrainerMainDialog::HometrainerMainDialog(
   const std::string& filename)
   : HometrainerMainDialog(CreateQuestions(filename))
 {
-  #ifndef NDEBUG
-  Test();
-  #endif
+
 }
 
 ribi::HometrainerMainDialog::HometrainerMainDialog(
@@ -43,9 +41,6 @@ ribi::HometrainerMainDialog::HometrainerMainDialog(
     m_quit(false)
 
 {
-  #ifndef NDEBUG
-  Test();
-  #endif
   if (m_questions.empty())
   {
     throw std::logic_error("HometrainerMainDialog: no valid question");
@@ -63,7 +58,7 @@ ribi::HometrainerMainDialog::HometrainerMainDialog(
   std::random_shuffle(m_questions.begin(),m_questions.end());
 }
 
-const boost::shared_ptr<const ribi::Question> ribi::HometrainerMainDialog::CreateQuestion(
+boost::shared_ptr<const ribi::Question> ribi::CreateQuestion(
   const std::string& s) noexcept
 {
   try
@@ -93,7 +88,7 @@ const boost::shared_ptr<const ribi::Question> ribi::HometrainerMainDialog::Creat
   return q;
 }
 
-boost::shared_ptr<ribi::QuestionDialog> ribi::HometrainerMainDialog::CreateQuestionDialog(
+boost::shared_ptr<ribi::QuestionDialog> ribi::CreateQuestionDialog(
   boost::shared_ptr<const Question> question) noexcept
 {
   assert(question);
@@ -240,34 +235,16 @@ void ribi::HometrainerMainDialog::Submit(const std::string& answer_from_user)
   NewQuestion();
 }
 
-#ifndef NDEBUG
-void ribi::HometrainerMainDialog::Test() noexcept
+void ribi::TestHometrainerMainDialog() noexcept
 {
-  {
-    static bool is_tested{false};
-    if (is_tested) return;
-    is_tested = true;
-  }
-  {
-    OpenQuestionFactory();
-    {
-      const std::string q{MultipleChoiceQuestion::GetValidMultipleChoiceQuestions()[0]};
-      boost::shared_ptr<MultipleChoiceQuestion> m{new MultipleChoiceQuestion(q)};
-      boost::shared_ptr<MultipleChoiceQuestionDialog> d{new MultipleChoiceQuestionDialog(m)};
-    }
-    { boost::shared_ptr<OpenQuestionDialog> d{new OpenQuestionDialog};}
-  }
-  const TestTimer test_timer(__func__,__FILE__,1.0);
   for(const std::string& s: OpenQuestionFactory().GetValidOpenQuestionStrings())
   {
     assert(CreateQuestion(s));
     assert(CreateQuestionDialog(CreateQuestion(s)));
   }
-  for(const std::string& s: MultipleChoiceQuestion::GetValidMultipleChoiceQuestions())
+  for(const std::string& s: GetValidMultipleChoiceQuestions())
   {
     assert(CreateQuestion(s));
     assert(CreateQuestionDialog(CreateQuestion(s)));
   }
-
 }
-#endif

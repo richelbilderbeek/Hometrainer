@@ -79,10 +79,9 @@ struct MultipleChoiceQuestionDialog final : public QuestionDialog
   //static MultipleChoiceQuestion * CreateDefaultQuestion();
   static boost::shared_ptr<MultipleChoiceQuestion> CreateDefaultQuestion() noexcept;
 
-  #ifndef NDEBUG
-  static void Test() noexcept;
-  #endif
 };
+
+void TestMultipleChoiceQuestionDialog() noexcept;
 
 } //~namespace ribi
 

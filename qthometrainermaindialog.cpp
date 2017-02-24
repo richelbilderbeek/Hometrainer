@@ -22,8 +22,8 @@
 #include "hometrainermaindialog.h"
 #include "qtopenquestiondialog.h"
 #include "questiondialog.h"
-#include "testtimer.h"
-#include "trace.h"
+
+
 #include "ui_qthometrainermaindialog.h"
 
 #pragma GCC diagnostic pop
@@ -37,9 +37,6 @@ ribi::QtHometrainerMainDialog::QtHometrainerMainDialog(
     m_qtdialog{}
     //m_questions{dialog->GetQuestions()}
 {
-  #ifndef NDEBUG
-  Test();
-  #endif
   ui->setupUi(this);
 
   assert(m_dialog);
@@ -50,12 +47,7 @@ ribi::QtHometrainerMainDialog::~QtHometrainerMainDialog() noexcept
 {
   delete ui;
 }
-/*
-const boost::shared_ptr<ribi::HometrainerMainDialog> ribi::QtHometrainerMainDialog::CreateMainDialog()
-{
-  boost::shared_ptr<ribi::HometrainerMainDialog> d(new ribi::HometrainerMainDialog(
-}
-*/
+
 boost::shared_ptr<ribi::QtQuestionDialog> ribi::QtHometrainerMainDialog::CreateQtQuestionDialog(
   const boost::shared_ptr<const Question> s)
 {
@@ -171,15 +163,8 @@ void ribi::QtHometrainerMainDialog::SetQuestion(const boost::shared_ptr<const Qu
   DisplayScore();
 }
 
-#ifndef NDEBUG
-void ribi::QtHometrainerMainDialog::Test() noexcept
+void ribi::TestQtHometrainerMainDialog() noexcept
 {
-  {
-    static bool is_tested = false;
-    if (is_tested) return;
-    is_tested = true;
-  }
-  const TestTimer test_timer(__func__,__FILE__,1.0);
   std::vector<boost::shared_ptr<const Question> > v;
   {
     const boost::shared_ptr<const Question> q {
@@ -200,4 +185,3 @@ void ribi::QtHometrainerMainDialog::Test() noexcept
 
   QtHometrainerMainDialog d(dialog);
 }
-#endif

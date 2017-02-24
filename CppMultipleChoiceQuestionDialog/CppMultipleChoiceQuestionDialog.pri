@@ -1,12 +1,8 @@
-INCLUDEPATH += \
-    ../RibiClasses/CppMultipleChoiceQuestionDialog
+INCLUDEPATH += $$PWD
 
 SOURCES += \
-    ../RibiClasses/CppMultipleChoiceQuestionDialog/multiplechoicequestiondialog.cpp
+    $$PWD/multiplechoicequestiondialog.cpp
 
 HEADERS  += \
-    ../RibiClasses/CppMultipleChoiceQuestionDialog/multiplechoicequestiondialog.h
-
-OTHER_FILES += \
-    ../RibiClasses/CppMultipleChoiceQuestionDialog/Licence.txt
+    $$PWD/multiplechoicequestiondialog.h
 

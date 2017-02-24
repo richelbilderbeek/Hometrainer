@@ -12,15 +12,13 @@
 
 #include "container.h"
 #include "openquestion.h"
-#include "testtimer.h"
-#include "trace.h"
+
+
 #pragma GCC diagnostic pop
 
 ribi::OpenQuestionFactory::OpenQuestionFactory()
 {
-  #ifndef NDEBUG
-  Test();
-  #endif
+
 }
 
 boost::shared_ptr<ribi::OpenQuestion>
@@ -47,7 +45,6 @@ boost::shared_ptr<ribi::OpenQuestion>
   const auto v = Container().SeperateString(s,',');
   if (v.size() != 3)
   {
-    if (verbose) { TRACE(s); }
     throw std::logic_error("An open question has exactly three comma-seperated elements");
   }
   const auto filename = v[0];
@@ -159,17 +156,9 @@ std::vector<std::string> ribi::OpenQuestionFactory::GetVersionHistory() noexcept
   };
 }
 
-#ifndef NDEBUG
-void ribi::OpenQuestionFactory::Test() noexcept
+void ribi::TestOpenQuestionFactory() noexcept
 {
-  {
-    static bool is_tested{false};
-    if (is_tested) return;
-    is_tested = true;
-  }
-  Container();
-  OpenQuestionFactory().GetTestOpenQuestions();
-  const TestTimer test_timer(__func__,__FILE__,1.0);
+  
   OpenQuestionFactory f;
   try
   {
@@ -193,8 +182,6 @@ void ribi::OpenQuestionFactory::Test() noexcept
       }
       catch (std::exception& e)
       {
-        TRACE("ERROR");
-        TRACE(s);
         assert(!"Valid questions must be accepted");
       }
     }
@@ -206,8 +193,6 @@ void ribi::OpenQuestionFactory::Test() noexcept
       try
       {
         const auto q = f.Create(s);
-        TRACE("ERROR");
-        TRACE(s);
         assert(!"Invalid questions must be rejected");
         assert(q); //To make the compiler happy
       }
@@ -218,4 +203,3 @@ void ribi::OpenQuestionFactory::Test() noexcept
     }
   }
 }
-#endif

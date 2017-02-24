@@ -35,8 +35,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "imagecanvas.h"
 #include "openquestionfactory.h"
-#include "testtimer.h"
-#include "trace.h"
+
+
 #pragma GCC diagnostic pop
 
 /*
@@ -46,10 +46,6 @@ ribi::OpenQuestion::OpenQuestion(const std::string& question)
       SeperateString(question,',').at(1),
       ExtractAnswers(question))
 {
-  #ifndef NDEBUG
-  Test();
-  #endif
-
   if (question.empty())
   {
     throw std::logic_error("An open question must contain text");
@@ -76,9 +72,6 @@ ribi::OpenQuestion::OpenQuestion(
   const std::vector<std::string>& answers)
   : Question(filename,question, answers )
 {
-  #ifndef NDEBUG
-  Test();
-  #endif
   //assert(!filename.empty() && "Filename must not be empty");
   //assert(FileExists(filename) == true && "File must exists");
   //assert(!question.empty() && "OpenQuestion must not be empty");
@@ -117,18 +110,8 @@ std::vector<std::string> ribi::OpenQuestion::GetVersionHistory() noexcept
   };
 }
 
-#ifndef NDEBUG
-void ribi::OpenQuestion::Test() noexcept
+void ribi::TestOpenQuestion() noexcept
 {
-  {
-    static bool is_tested{false};
-    if (is_tested) return;
-    is_tested = true;
-  }
-  {
-    try { std::make_shared<ImageCanvas>("",0); } catch (std::logic_error&) { /* fine */ }
-  }
-  const TestTimer test_timer(__func__,__FILE__,1.0);
   //Test simple get/set with single answer
   {
     const std::string filename = "-";
@@ -182,7 +165,6 @@ void ribi::OpenQuestion::Test() noexcept
     }
   }
 }
-#endif
 
 std::vector<std::string> ribi::OpenQuestion::ToLines() const noexcept
 {

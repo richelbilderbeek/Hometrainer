@@ -5,6 +5,8 @@
 #pragma GCC diagnostic ignored "-Weffc++"
 #pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #pragma GCC diagnostic ignored "-Wunused-but-set-parameter"
+#include <string>
+#include <vector>
 #include <boost/shared_ptr.hpp>
 #pragma GCC diagnostic pop
 
@@ -39,13 +41,9 @@ struct OpenQuestionDialogFactory final
 
   static std::string GetVersion() noexcept;
   static std::vector<std::string> GetVersionHistory() noexcept;
-
-  private:
-
-  #ifndef NDEBUG
-  static void Test() noexcept;
-  #endif
 };
+
+void TestOpenQuestionDialogFactory() noexcept;
 
 } //~namespace ribi
 

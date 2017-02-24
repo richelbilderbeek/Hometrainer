@@ -37,7 +37,7 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 #include "multiplechoicequestiondialog.h"
 #include "qtquestiondialog.h"
 #include "questiondialog.h"
-#include "trace.h"
+
 #include "ui_qtmultiplechoicequestiondialog.h"
 
 #pragma GCC diagnostic pop
@@ -202,21 +202,6 @@ void ribi::QtMultipleChoiceQuestionDialog::SetDialog(const boost::shared_ptr<Que
 
     mc_question_changed = mc_question_before != mc_question_after;
 
-    if (verbose)
-    {
-      if (mc_question_changed)
-      {
-        std::stringstream s;
-        s
-          << "open_question will change from "
-          << mc_question_before->ToStr()
-          << " to "
-          << mc_question_after->ToStr()
-          << '\n'
-        ;
-        TRACE(s.str());
-      }
-    }
     //Disconnect
     m_dialog->m_signal_mc_question_changed.disconnect(
       boost::bind(&ribi::QtMultipleChoiceQuestionDialog::OnMultipleChoiceQuestionDialogChanged,this,boost::lambda::_1)

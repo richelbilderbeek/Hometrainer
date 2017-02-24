@@ -39,10 +39,9 @@ struct OpenQuestionFactory
   static std::vector<std::string> GetVersionHistory() noexcept;
 
   private:
-  #ifndef NDEBUG
-  static void Test() noexcept;
-  #endif
 };
+
+void TestOpenQuestionFactory() noexcept;
 
 } //~namespace ribi
 

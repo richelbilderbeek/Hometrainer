@@ -1,14 +1,10 @@
-INCLUDEPATH += \
-    ../RibiClasses/CppOpenQuestionDialog
+INCLUDEPATH += $$PWD
 
 SOURCES += \
-    ../RibiClasses/CppOpenQuestionDialog/openquestiondialog.cpp \
-    ../RibiClasses/CppOpenQuestionDialog/openquestiondialogfactory.cpp
+    $$PWD/openquestiondialog.cpp \
+    $$PWD/openquestiondialogfactory.cpp
 
 HEADERS  += \
-    ../RibiClasses/CppOpenQuestionDialog/openquestiondialog.h \
-    ../RibiClasses/CppOpenQuestionDialog/openquestiondialogfactory.h
-
-OTHER_FILES += \
-    ../RibiClasses/CppOpenQuestionDialog/Licence.txt
+    $$PWD/openquestiondialog.h \
+    $$PWD/openquestiondialogfactory.h
 

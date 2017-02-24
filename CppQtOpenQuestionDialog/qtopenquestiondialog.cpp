@@ -29,7 +29,7 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 #include "fileio.h"
 #include "openquestion.h"
 #include "openquestiondialog.h"
-#include "trace.h"
+
 #include "ui_qtopenquestiondialog.h"
 
 #include <QFile>
@@ -116,21 +116,6 @@ void ribi::QtOpenQuestionDialog::SetDialog(const boost::shared_ptr<QuestionDialo
 
     open_question_changed = open_question_before != open_question_after;
 
-    if (verbose)
-    {
-      if (open_question_changed)
-      {
-        std::stringstream s;
-        s
-          << "open_question will change from "
-          << open_question_before->ToStr()
-          << " to "
-          << open_question_after->ToStr()
-          << '\n'
-        ;
-        TRACE(s.str());
-      }
-    }
     //Disconnect
     m_openquestiondialog->m_signal_open_question_changed.disconnect(
       boost::bind(&ribi::QtOpenQuestionDialog::OnOpenQuestionDialogChanged,this,boost::lambda::_1)

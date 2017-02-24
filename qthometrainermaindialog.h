@@ -52,14 +52,13 @@ private:
   void OnSubmitted(const bool is_correct);
 
 
-  #ifndef NDEBUG
-  static void Test() noexcept;
-  #endif
 
 private slots:
   void NewQuestion();
 
 };
+
+void TestQtHometrainerMainDialog() noexcept;
 
 } //~namespace ribi
 

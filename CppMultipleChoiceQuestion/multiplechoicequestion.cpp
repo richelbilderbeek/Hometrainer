@@ -1,24 +1,3 @@
-//---------------------------------------------------------------------------
-/*
-MultipleChoiceQuestion, class for a multiple choice question
-Copyright (C) 2011-2015 Richel Bilderbeek
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-//---------------------------------------------------------------------------
-// From http://www.richelbilderbeek.nl/CppMultipleChoiceQuestion
-//---------------------------------------------------------------------------
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Weffc++"
 #pragma GCC diagnostic ignored "-Wunused-local-typedefs"
@@ -33,8 +12,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "container.h"
 #include "fileio.h"
 #include "imagecanvas.h"
-#include "testtimer.h"
-#include "trace.h"
+
+
 #pragma GCC diagnostic pop
 
 ribi::MultipleChoiceQuestion::MultipleChoiceQuestion(const std::string& question)
@@ -45,9 +24,6 @@ ribi::MultipleChoiceQuestion::MultipleChoiceQuestion(const std::string& question
     m_wrong_answers(ExtractWrongAnswers(question)),
     m_options(ExtractOptions(question))
 {
-  #ifndef NDEBUG
-  Test();
-  #endif
   if (question.empty())
   {
     throw std::logic_error("A multiple choice question must contain text");
@@ -75,9 +51,6 @@ ribi::MultipleChoiceQuestion::MultipleChoiceQuestion(
   m_wrong_answers(wrong_answers),
   m_options(CreateOptions(wrong_answers,answer))
 {
-  #ifndef NDEBUG
-  Test();
-  #endif
   //assert(!filename.empty() && "Filename must not be empty");
   //assert(FileExists(filename) == true && "File must exists");
   //assert(!question.empty() && "MultipleChoiceQuestion must not be empty");
@@ -145,7 +118,7 @@ std::vector<std::string> ribi::MultipleChoiceQuestion::ExtractWrongAnswers(const
   return w;
 }
 
-std::vector<std::string> ribi::MultipleChoiceQuestion::GetInvalidMultipleChoiceQuestions() noexcept
+std::vector<std::string> ribi::GetInvalidMultipleChoiceQuestions() noexcept
 {
   return {
     "-,1+1=,2", //No incorrect options
@@ -178,7 +151,7 @@ const std::vector<std::string>& ribi::MultipleChoiceQuestion::GetOptions() const
   return m_options;
 }
 
-std::vector<std::string> ribi::MultipleChoiceQuestion::GetValidMultipleChoiceQuestions() noexcept
+std::vector<std::string> ribi::GetValidMultipleChoiceQuestions() noexcept
 {
   return {
     "-,1+1=,2,1",
@@ -201,20 +174,8 @@ std::vector<std::string> ribi::MultipleChoiceQuestion::GetVersionHistory() noexc
   };
 }
 
-#ifndef NDEBUG
-void ribi::MultipleChoiceQuestion::Test() noexcept
+void ribi::TestMultipleChoiceQuestion() noexcept
 {
-  {
-    static bool is_tested{false};
-    if (is_tested) return;
-    is_tested = true;
-  }
-  {
-    Container();
-    ribi::fileio::FileIo();
-    ImageCanvas::Test();
-  }
-  const TestTimer test_timer(__func__,__FILE__,1.0);
   try
   {
     const boost::scoped_ptr<MultipleChoiceQuestion> q {
@@ -242,8 +203,6 @@ void ribi::MultipleChoiceQuestion::Test() noexcept
       }
       catch (std::exception& e)
       {
-        TRACE("ERROR");
-        TRACE(s);
         assert(!"Valid questions must be accepted");
       }
     }
@@ -256,8 +215,6 @@ void ribi::MultipleChoiceQuestion::Test() noexcept
       try
       {
         const boost::scoped_ptr<MultipleChoiceQuestion> q { new MultipleChoiceQuestion(s) };
-        TRACE("ERROR");
-        TRACE(s);
         assert(!"Invalid questions must be rejected");
       }
       catch (std::exception& e)
@@ -303,7 +260,6 @@ void ribi::MultipleChoiceQuestion::Test() noexcept
     }
   }
 }
-#endif
 
 std::vector<std::string> ribi::MultipleChoiceQuestion::ToLines() const noexcept
 {

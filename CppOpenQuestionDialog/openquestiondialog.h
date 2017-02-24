@@ -74,10 +74,9 @@ struct OpenQuestionDialog final : public QuestionDialog
   std::string m_answer_in_progress;
   boost::shared_ptr<OpenQuestion> m_open_question;
 
-  #ifndef NDEBUG
-  static void Test() noexcept;
-  #endif
 };
+
+void TestOpenQuestionDialog() noexcept;
 
 } //~namespace ribi
 

@@ -67,10 +67,9 @@ struct OpenQuestion : public Question
   static std::vector<std::string> ExtractAnswers(
     const std::string& input);
 
-  #ifndef NDEBUG
-  static void Test() noexcept;
-  #endif
 };
+
+void TestOpenQuestion() noexcept;
 
 } //~namespace ribi
 
