@@ -59,22 +59,20 @@ struct MultipleChoiceQuestion : public Question
   ///All the options the user can choose from, which equals
   ///all wrong answers and the correct answer, shuffled randomly
   const std::vector<std::string> m_options;
-
-  ///Create the possible options to be chosen in a random order
-  static std::vector<std::string> CreateOptions(
-    const std::vector<std::string>& wrong_answers,
-    const std::string& answer) noexcept;
-
-  ///The options (correct + wrong answers) are at indices 2 to SeperateString(input,',').size()
-  static std::vector<std::string> ExtractOptions(
-    const std::string& input);
-
-  ///The wrong answers are at indices 3 to SeperateString(input,',').size()
-  static std::vector<std::string> ExtractWrongAnswers(
-    const std::string& input);
-
-
 };
+
+///Create the possible options to be chosen in a random order
+std::vector<std::string> CreateMcqOptions(
+  const std::vector<std::string>& wrong_answers,
+  const std::string& answer) noexcept;
+
+///The options (correct + wrong answers) are at indices 2 to SeperateString(input,',').size()
+std::vector<std::string> ExtractMcqOptions(
+  const std::string& input);
+
+///The wrong answers are at indices 3 to SeperateString(input,',').size()
+std::vector<std::string> ExtractMcqWrongAnswers(
+  const std::string& input);
 
 ///Obtain valid multiple choice question
 std::vector<std::string> GetInvalidMultipleChoiceQuestions() noexcept;

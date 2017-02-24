@@ -21,8 +21,8 @@ ribi::MultipleChoiceQuestion::MultipleChoiceQuestion(const std::string& question
       Container().SeperateString(question,',').at(0),
       Container().SeperateString(question,',').at(1),
       { Container().SeperateString(question,',').at(2) }),
-    m_wrong_answers(ExtractWrongAnswers(question)),
-    m_options(ExtractOptions(question))
+    m_wrong_answers(ExtractMcqWrongAnswers(question)),
+    m_options(ExtractMcqOptions(question))
 {
   if (question.empty())
   {
@@ -49,7 +49,7 @@ ribi::MultipleChoiceQuestion::MultipleChoiceQuestion(
   const std::vector<std::string>& wrong_answers)
 : Question(filename,question, {answer} ),
   m_wrong_answers(wrong_answers),
-  m_options(CreateOptions(wrong_answers,answer))
+  m_options(CreateMcqOptions(wrong_answers,answer))
 {
   //assert(!filename.empty() && "Filename must not be empty");
   //assert(FileExists(filename) == true && "File must exists");
@@ -82,7 +82,7 @@ const std::string& ribi::MultipleChoiceQuestion::GetAnswer() const noexcept
   return GetCorrectAnswers()[0];
 }
 
-std::vector<std::string> ribi::MultipleChoiceQuestion::CreateOptions(
+std::vector<std::string> ribi::CreateMcqOptions(
   const std::vector<std::string>& wrong_answers,
   const std::string& answer) noexcept
 {
@@ -92,7 +92,7 @@ std::vector<std::string> ribi::MultipleChoiceQuestion::CreateOptions(
   return v;
 }
 
-std::vector<std::string> ribi::MultipleChoiceQuestion::ExtractOptions(const std::string& input)
+std::vector<std::string> ribi::ExtractMcqOptions(const std::string& input)
 {
   const auto v = Container().SeperateString(input,',');
   std::vector<std::string> w;
@@ -101,7 +101,7 @@ std::vector<std::string> ribi::MultipleChoiceQuestion::ExtractOptions(const std:
   return w;
 }
 
-std::vector<std::string> ribi::MultipleChoiceQuestion::ExtractWrongAnswers(const std::string& input)
+std::vector<std::string> ribi::ExtractMcqWrongAnswers(const std::string& input)
 {
   const auto v = Container().SeperateString(input,',');
   if (v.size() < 4)

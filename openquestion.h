@@ -42,9 +42,6 @@ struct OpenQuestion : public Question
   friend void boost::checked_delete<>(const OpenQuestion *);
   ~OpenQuestion() noexcept {}
 
-  ///The wrong answers are at indices 2 to SeperateString(input,',').size()
-  static std::vector<std::string> ExtractAnswers(
-    const std::string& input);
 
 };
 
