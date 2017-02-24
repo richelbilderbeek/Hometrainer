@@ -33,7 +33,7 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 #include <Wt/WTimer>
 
 #include "exercise.h"
-#include "trace.h"
+
 #include "question.h"
 #include "questiondialog.h"
 #include "wtexercise.h"
@@ -60,17 +60,13 @@ ribi::WtExercise::WtExercise()
   assert(m_ui.m_box);
   assert(m_ui.m_label_score);
 
-  TRACE_FUNC();
   this->clear();
   this->addWidget(m_ui.m_box);
   this->addWidget(new Wt::WBreak);
   this->addWidget(m_ui.m_label_score);
 
-  TRACE("ribi::WtExercise::WtExercise #1");
-
   m_ui.m_label_score->setText("Score: 0/0");
 
-  TRACE("ribi::WtExercise::WtExercise end");
 }
 
 void ribi::WtExercise::DisplayCurrentQuestion()
