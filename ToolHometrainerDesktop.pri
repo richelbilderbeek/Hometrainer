@@ -2,37 +2,23 @@ include(ToolHometrainerConsole.pri)
 
 SOURCES += \
     $$PWD/qthometrainermaindialog.cpp \
+    $$PWD/qtmultiplechoicequestiondialog.cpp \
+    $$PWD/qtopenquestiondialog.cpp \
+    $$PWD/qtquestiondialog.cpp \
     $$PWD/qthometrainermenudialog.cpp
 
 HEADERS  += \
     $$PWD/qthometrainermaindialog.h \
+    $$PWD/qtmultiplechoicequestiondialog.h \
+    $$PWD/qtopenquestiondialog.h \
+    $$PWD/qtquestiondialog.h \
     $$PWD/qthometrainermenudialog.h
 
 FORMS += \
     $$PWD/qthometrainermaindialog.ui \
+    $$PWD/qtmultiplechoicequestiondialog.ui \
+    $$PWD/qtopenquestiondialog.ui \
     $$PWD/qthometrainermenudialog.ui
 
 
-SOURCES += $$PWD/qtmultiplechoicequestiondialog.cpp
-
-HEADERS  += $$PWD/qtmultiplechoicequestiondialog.h
-
-FORMS += $$PWD/qtmultiplechoicequestiondialog.ui
-
-
-SOURCES += \
-    $$PWD/qtopenquestiondialog.cpp
-
-HEADERS  += \
-    $$PWD/qtopenquestiondialog.h
-
-FORMS += \
-    $$PWD/qtopenquestiondialog.ui
-
-
-SOURCES += \
-    $$PWD/qtquestiondialog.cpp
-
-HEADERS  += \
-    $$PWD/qtquestiondialog.h
 

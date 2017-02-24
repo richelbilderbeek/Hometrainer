@@ -5,6 +5,7 @@ SOURCES += \
     $$PWD/hometrainermaindialog.cpp \
     $$PWD/hometrainermenudialog.cpp \
     $$PWD/multiplechoicequestion.cpp \
+    $$PWD/multiplechoicequestiondialog.cpp \
     $$PWD/openquestion.cpp \
     $$PWD/openquestiondialog.cpp \
     $$PWD/openquestiondialogfactory.cpp \
@@ -19,6 +20,7 @@ HEADERS  += \
     $$PWD/hometrainermenudialog.h \
     $$PWD/hometrainerresources.h \
     $$PWD/multiplechoicequestion.h \
+    $$PWD/multiplechoicequestiondialog.h \
     $$PWD/openquestiondialogfactory.h \
     $$PWD/openquestiondialog.h \
     $$PWD/openquestionfactory.h \
