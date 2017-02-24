@@ -13,7 +13,6 @@
 #include "container.h"
 #include "openquestion.h"
 
-
 #pragma GCC diagnostic pop
 
 ribi::OpenQuestionFactory::OpenQuestionFactory()
@@ -25,7 +24,6 @@ boost::shared_ptr<ribi::OpenQuestion>
   ribi::OpenQuestionFactory::Create(const std::string& s
 ) const
 {
-  const bool verbose{false};
   if (s.empty())
   {
     throw std::logic_error("An open question must contain text");

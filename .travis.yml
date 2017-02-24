@@ -36,7 +36,14 @@ before_script:
   - sleep 3 # give xvfb some time to start
 
 script: 
-  # Build and run Boost.Test
+  # Build and run console version
+  - qmake -qt=qt5 ToolHometrainerConsole.pro
+  - make
+  - ./ToolHometrainerConsole --example
+  - ./ToolHometrainerConsole --filename ToolHometrainerExerciseTest.txt &
+  - sleep 1
+  - sudo killall -9 ToolHometrainerDesktop
+  # Build and run desktop version
   - qmake -qt=qt5 ToolHometrainerDesktop.pro
   - make
   - ./ToolHometrainerDesktop &
