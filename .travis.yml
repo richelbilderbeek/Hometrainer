@@ -42,7 +42,7 @@ script:
   - ./ToolHometrainerConsole --example
   - ./ToolHometrainerConsole --filename ToolHometrainerExerciseTest.txt &
   - sleep 1
-  - sudo killall -9 ToolHometrainerConsole
+  # - sudo killall -9 ToolHometrainerConsole #No need to kill it?
   # Build and run desktop version
   - qmake -qt=qt5 ToolHometrainerDesktop.pro
   - make debug
