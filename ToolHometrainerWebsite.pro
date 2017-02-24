@@ -1,6 +1,30 @@
-include(../RibiLibraries/WebApplication.pri)
+# C++14
+CONFIG += c++14
+QMAKE_CXX = g++-5
+QMAKE_LINK = g++-5
+QMAKE_CC = gcc-5
+QMAKE_CXXFLAGS += -Wall -Wextra -std=c++14
+
+
+# Debug and release mode
+
+CONFIG += debug_and_release
+CONFIG(debug, debug|release) {
+  message(Debug mode)
+}
+
+CONFIG(release, debug|release) {
+  message(Release mode)
+  DEFINES += NDEBUG
+}
+
+# Qt
+QT += core gui
+
+# Wt
+LIBS += -lwt -lwthttp
+
 include(../RibiLibraries/BoostAll.pri)
-include(../RibiLibraries/Wt.pri)
 
 include(../RibiClasses/CppAbout/CppAbout.pri)
 include(../RibiClasses/CppFileIo/CppFileIo.pri)
