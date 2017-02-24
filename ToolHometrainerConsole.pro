@@ -3,7 +3,8 @@ CONFIG += c++14
 QMAKE_CXX = g++-5
 QMAKE_LINK = g++-5
 QMAKE_CC = gcc-5
-QMAKE_CXXFLAGS += -Wall -Wextra -Weffc++ -Werror -std=c++14
+# -Weffc++ does not go well with Qt
+QMAKE_CXXFLAGS += -Wall -Wextra -Werror -std=c++14
 
 # Debug and relase mode
 CONFIG += debug_and_release
