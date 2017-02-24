@@ -38,14 +38,14 @@ before_script:
 script: 
   # Build and run console version
   - qmake -qt=qt5 ToolHometrainerConsole.pro
-  - make
+  - make debug
   - ./ToolHometrainerConsole --example
   - ./ToolHometrainerConsole --filename ToolHometrainerExerciseTest.txt &
   - sleep 1
   - sudo killall -9 ToolHometrainerDesktop
   # Build and run desktop version
   - qmake -qt=qt5 ToolHometrainerDesktop.pro
-  - make
+  - make debug
   - ./ToolHometrainerDesktop &
   - sudo killall -9 ToolHometrainerDesktop
   # Get code coverage
