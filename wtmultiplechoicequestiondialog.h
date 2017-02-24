@@ -41,11 +41,12 @@ struct WtMultipleChoiceQuestionDialog : public WtQuestionDialog
 {
   explicit WtMultipleChoiceQuestionDialog(const std::string& question);
 
-  explicit WtMultipleChoiceQuestionDialog(const boost::shared_ptr<MultipleChoiceQuestionDialog>& dialog);
+  explicit WtMultipleChoiceQuestionDialog(
+    const boost::shared_ptr<MultipleChoiceQuestionDialog>& dialog);
 
   boost::shared_ptr<const QuestionDialog> GetDialog() const noexcept;
-  boost::shared_ptr<const MultipleChoiceQuestionDialog> GetMultipleChoiceQuestionDialog() const noexcept;
-
+  boost::shared_ptr<const MultipleChoiceQuestionDialog>
+    GetMultipleChoiceQuestionDialog() const noexcept;
 
   ///Obtain the version of this class
   static std::string GetVersion();
