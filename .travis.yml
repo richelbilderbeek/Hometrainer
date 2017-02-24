@@ -22,6 +22,8 @@ install:
   # C++14
   - sudo apt-get install -qq g++-5
   - sudo update-alternatives --install /usr/bin/gcov gcov /usr/bin/gcov-5 90
+  # Wt
+  - sudo apt-get install witty witty-dbg witty-dev witty-doc
   # Codecov
   - sudo pip install codecov
   # OCLint
@@ -48,6 +50,11 @@ script:
   - make debug
   - ./ToolHometrainerDesktop &
   - sudo killall -9 ToolHometrainerDesktop
+  # Build and run website version
+  - qmake -qt=qt5 ToolHometrainerWebsite.pro
+  - make debug
+  - ./ToolHometrainerWebsite &
+  - sudo killall -9 ToolHometrainerWebsite
   # Get code coverage
   - ./get_code_cov
   - codecov
