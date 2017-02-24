@@ -5,18 +5,20 @@ QMAKE_LINK = g++-5
 QMAKE_CC = gcc-5
 QMAKE_CXXFLAGS += -Wall -Wextra -Weffc++ -Werror -std=c++14
 
-# Go ahead and use Qt.Core: it is about as platform-independent as
-# the STL and Boost
-QT += core
-
-# Go ahead and use Qt.Gui: it is about as platform-independent as
-# the STL and Boost. It is needed for QImage
-QT += gui
-
+# Debug and relase mode
 CONFIG += debug_and_release
 CONFIG(release, debug|release) {
   DEFINES += NDEBUG
 }
+
+# Qt
+QT += core gui
+
+# Prevents this error:
+#/usr/include/boost/math/constants/constants.hpp:277: error: unable to find numeric literal operator 'operator""Q'
+#   BOOST_DEFINE_MATH_CONSTANT(half, 5.000000000000000000000000000000000000e-01, "5.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e-01")
+#   ^
+QMAKE_CXXFLAGS += -fext-numeric-literals
 
 include(../RibiClasses/CppAbout/CppAbout.pri)
 include(../RibiClasses/CppFileIo/CppFileIo.pri)
