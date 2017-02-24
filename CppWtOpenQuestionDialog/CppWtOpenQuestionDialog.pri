@@ -1,12 +1,8 @@
-INCLUDEPATH += \
-    ../RibiClasses/CppWtOpenQuestionDialog
+INCLUDEPATH += $$PWD
 
 SOURCES += \
-    ../RibiClasses/CppWtOpenQuestionDialog/wtopenquestiondialog.cpp
+    $$PWD/wtopenquestiondialog.cpp
 
 HEADERS  += \
-    ../RibiClasses/CppWtOpenQuestionDialog/wtopenquestiondialog.h
-
-OTHER_FILES += \
-    ../RibiClasses/CppWtOpenQuestionDialog/Licence.txt
+    $$PWD/wtopenquestiondialog.h
 

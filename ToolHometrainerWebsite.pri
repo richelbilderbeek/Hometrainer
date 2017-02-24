@@ -1,14 +1,14 @@
-include(../../Tools/ToolHometrainer/ToolHometrainerConsole.pri)
+include(ToolHometrainerConsole.pri)
 
 SOURCES += \
-    ../../Tools/ToolHometrainer/wthometrainerloadexercisedialog.cpp \
-    ../../Tools/ToolHometrainer/wthometrainermenudialog.cpp \
-    ../../Tools/ToolHometrainer/wthometrainerstartexercisedialog.cpp \
-    ../../Tools/ToolHometrainer/wtselecthometrainerfiledialog.cpp
+    $$PWD/wthometrainerloadexercisedialog.cpp \
+    $$PWD/wthometrainermenudialog.cpp \
+    $$PWD/wthometrainerstartexercisedialog.cpp \
+    $$PWD/wtselecthometrainerfiledialog.cpp
 
 HEADERS  += \
-    ../../Tools/ToolHometrainer/wthometrainerloadexercisedialog.h \
-    ../../Tools/ToolHometrainer/wthometrainermenudialog.h \
-    ../../Tools/ToolHometrainer/wthometrainerstartexercisedialog.h \
-    ../../Tools/ToolHometrainer/wtselecthometrainerfiledialog.h
+    $$PWD/wthometrainerloadexercisedialog.h \
+    $$PWD/wthometrainermenudialog.h \
+    $$PWD/wthometrainerstartexercisedialog.h \
+    $$PWD/wtselecthometrainerfiledialog.h
 
