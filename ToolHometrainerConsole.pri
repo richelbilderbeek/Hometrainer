@@ -1,4 +1,4 @@
-INCLUDEPATH += ../Hometrainer
+INCLUDEPATH += $$PWD
 
 SOURCES += \
     $$PWD/exercise.cpp \
