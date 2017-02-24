@@ -58,9 +58,6 @@ struct HometrainerMainDialog
   ///Does the user want to quit?
   bool m_quit;
 
-  static std::vector<boost::shared_ptr<const Question>> CreateQuestions(
-    const std::string& filename);
-
   void DisplayScore() const noexcept;
 
   ///Create a new question
@@ -77,6 +74,9 @@ struct HometrainerMainDialog
 ///Create a Question from a std::string
 ///Returns nullptr if the string cannot be converted to a question
 boost::shared_ptr<const Question > CreateQuestion(const std::string& s) noexcept;
+
+std::vector<boost::shared_ptr<const Question>> CreateQuestions(
+    const std::string& filename);
 
 ///Build the correct dialog for a (derived class of) question
 boost::shared_ptr<QuestionDialog> CreateQuestionDialog(

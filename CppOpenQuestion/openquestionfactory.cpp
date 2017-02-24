@@ -77,24 +77,6 @@ boost::shared_ptr<ribi::OpenQuestion>
   //assert(!correct_answers.empty() && "Correct answer must not be empty");
 }
 
-/*
-std::vector<std::string> ribi::OpenQuestionFactory::ExtractAnswers(const std::string& input)
-{
-  const std::vector<std::string> v = SeperateString(input,',');
-  if (v.size() != 3)
-  {
-    throw std::logic_error("An open question has exactly three comma-seperated elements");
-  }
-
-  const std::vector<std::string> w = SeperateString(v[2],'/');
-  if (w.size() == 0)
-  {
-    throw std::logic_error("An open question has at least one correct answer");
-  }
-  return w;
-}
-*/
-
 std::vector<std::string>
   ribi::OpenQuestionFactory::GetInvalidOpenQuestionStrings() const noexcept
 {

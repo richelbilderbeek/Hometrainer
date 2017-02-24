@@ -121,7 +121,7 @@ boost::shared_ptr<ribi::QuestionDialog> ribi::CreateQuestionDialog(
 }
 
 std::vector<boost::shared_ptr<const ribi::Question> >
-  ribi::HometrainerMainDialog::CreateQuestions(
+  ribi::CreateQuestions(
     const std::string& filename)
 {
   if (!fileio::FileIo().IsRegularFile(filename))
