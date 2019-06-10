@@ -14,9 +14,12 @@ Hometrainer can also be used for examination.
 
 ## Downloads
 
- * [Windows executable (console)](http://richelbilderbeek.nl/ToolHometrainerConsoleExe.zip)
- * [Windows executable (desktop)](http://richelbilderbeek.nl/ToolHometrainerDesktopExe.zip)
- * [Windows executable (website)](http://richelbilderbeek.nl/ToolHometrainerWebsiteExe.zip)
+ * [Windows executable (console, v2)](http://richelbilderbeek.nl/ToolHometrainerConsoleExe.zip)
+ * [Windows executable (desktop, v2)](http://richelbilderbeek.nl/ToolHometrainerDesktopExe.zip)
+ * [Windows executable (website, v2)](http://richelbilderbeek.nl/ToolHometrainerWebsiteExe.zip)
+ * [Windows executable (desktop, complete suite, v1.7)](http://richelbilderbeek.nl/ToolHometrainerExe_1_7.zip)
+ * Manual: [doc](doc/ToolHometrainerManual.doc) [odt](doc/ToolHometrainerManual.odt) [pdf](doc/ToolHometrainerManual.pdf)
+
 
 ## Simple example of Hometrainer in creating exercises
 
