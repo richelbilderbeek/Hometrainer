@@ -117,7 +117,7 @@ boost::shared_ptr<ribi::QuestionDialog> ribi::CreateQuestionDialog(
     }
   }
   assert(!"Should not get here");
-  throw std::logic_error("ribi::HometrainerMainDialog::CreateQuestionDialog: unimplemented question type");
+  return nullptr;
 }
 
 std::vector<boost::shared_ptr<const ribi::Question> >
