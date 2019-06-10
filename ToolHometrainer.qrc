@@ -1,9 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>ToolHometrainerWelcome.png</file>
-        <file>ToolHometrainerQuestion.png</file>
-        <file>ToolHometrainerQuestionmark.png</file>
-        <file>ToolHometrainerExerciseMultiplication.txt</file>
         <file>resources/ToolHometrainerExerciseAdapter.jpg</file>
         <file>resources/ToolHometrainerExerciseAuks.jpg</file>
         <file>resources/ToolHometrainerExerciseBakMetFilters.jpg</file>
@@ -90,14 +86,16 @@
         <file>resources/ToolHometrainerExerciseXlrMannetjeConnector.jpg</file>
         <file>resources/ToolHometrainerExerciseXlrVrouwtje.jpg</file>
         <file>resources/ToolHometrainerExerciseZekering.jpg</file>
-    </qresource>
-    <qresource prefix="/textfiles">
-        <file>ToolHometrainerExerciseClouds.txt</file>
-        <file>ToolHometrainerExerciseTest.txt</file>
-        <file>ToolHometrainerExerciseTtBasis.txt</file>
-        <file>ToolHometrainerExerciseTtGeluid.txt</file>
-        <file>ToolHometrainerExerciseTtLicht.txt</file>
-        <file>ToolHometrainerExerciseWijkenArnhem.txt</file>
+        <file>resources/ToolHometrainerWelcome.png</file>
+        <file>resources/ToolHometrainerQuestion.png</file>
+        <file>resources/ToolHometrainerQuestionmark.png</file>
+        <file>resources/ToolHometrainerExerciseClouds.txt</file>
+        <file>resources/ToolHometrainerExerciseMultiplication.txt</file>
+        <file>resources/ToolHometrainerExerciseTest.txt</file>
+        <file>resources/ToolHometrainerExerciseTtBasis.txt</file>
+        <file>resources/ToolHometrainerExerciseTtGeluid.txt</file>
+        <file>resources/ToolHometrainerExerciseTtLicht.txt</file>
+        <file>resources/ToolHometrainerExerciseWijkenArnhem.txt</file>
     </qresource>
     <qresource prefix="/docs">
         <file>ToolHometrainerManual.odt</file>
