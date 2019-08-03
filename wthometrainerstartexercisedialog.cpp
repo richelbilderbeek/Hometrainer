@@ -23,7 +23,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #pragma GCC diagnostic push
 
 
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+
 #pragma GCC diagnostic ignored "-Wcomment"
 #include <boost/lexical_cast.hpp>
 #include <boost/numeric/conversion/cast.hpp>

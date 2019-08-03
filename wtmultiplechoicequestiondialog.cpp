@@ -3,7 +3,7 @@
 #pragma GCC diagnostic push
 
 
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+
 #include <boost/bind.hpp>
 
 #include <boost/lambda/bind.hpp>
