@@ -1,4 +1,4 @@
-#pragma GCC diagnostic push
+
 
 
 #include "qtmultiplechoicequestiondialog.h"
@@ -20,7 +20,7 @@
 
 #include "ui_qtmultiplechoicequestiondialog.h"
 
-#pragma GCC diagnostic pop
+
 
 ribi::QtMultipleChoiceQuestionDialog::QtMultipleChoiceQuestionDialog(
   const boost::shared_ptr<MultipleChoiceQuestionDialog>& dialog,

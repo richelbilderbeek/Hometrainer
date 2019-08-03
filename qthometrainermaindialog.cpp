@@ -1,4 +1,4 @@
-#pragma GCC diagnostic push
+
 
 
 #include "qthometrainermaindialog.h"
@@ -26,7 +26,7 @@
 
 #include "ui_qthometrainermaindialog.h"
 
-#pragma GCC diagnostic pop
+
 
 ribi::QtHometrainerMainDialog::QtHometrainerMainDialog(
   const boost::shared_ptr<const HometrainerMainDialog> dialog,

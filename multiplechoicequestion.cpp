@@ -1,4 +1,4 @@
-#pragma GCC diagnostic push
+
 
 
 #include "multiplechoicequestion.h"
@@ -14,7 +14,7 @@
 #include "imagecanvas.h"
 
 
-#pragma GCC diagnostic pop
+
 
 ribi::MultipleChoiceQuestion::MultipleChoiceQuestion(const std::string& question)
   : Question(

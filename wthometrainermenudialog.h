@@ -21,12 +21,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #ifndef WTHOMETRAINERMENUDIALOG_H
 #define WTHOMETRAINERMENUDIALOG_H
 
-#pragma GCC diagnostic push
+
 
 
 
 #include <Wt/WContainerWidget>
-#pragma GCC diagnostic pop
+
 
 namespace ribi {
 

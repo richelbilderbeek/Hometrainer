@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#pragma GCC diagnostic push
+
 
 
 
@@ -12,7 +12,7 @@
 #include <boost/signals2.hpp>
 
 #include "tribool.h"
-#pragma GCC diagnostic pop
+
 
 namespace ribi {
 

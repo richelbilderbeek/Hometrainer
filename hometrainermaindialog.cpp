@@ -1,4 +1,4 @@
-#pragma GCC diagnostic push
+
 
 
 #include "hometrainermaindialog.h"
@@ -22,7 +22,7 @@
 #include "multiplechoicequestiondialog.h"
 
 
-#pragma GCC diagnostic pop
+
 
 ribi::HometrainerMainDialog::HometrainerMainDialog(
   const std::string& filename)

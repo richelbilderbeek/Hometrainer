@@ -1,9 +1,9 @@
-#pragma GCC diagnostic push
+
 
 #include <QApplication>
 #include "qthometrainermenudialog.h"
 
-#pragma GCC diagnostic pop
+
 
 int main(int argc, char *argv[])
 {

@@ -1,13 +1,13 @@
 #ifndef MULTIPLECHOICEQUESTIONDIALOG_H
 #define MULTIPLECHOICEQUESTIONDIALOG_H
 
-#pragma GCC diagnostic push
+
 
 
 #include <boost/shared_ptr.hpp>
 #include <boost/make_shared.hpp>
 #include "questiondialog.h"
-#pragma GCC diagnostic pop
+
 
 namespace ribi {
 

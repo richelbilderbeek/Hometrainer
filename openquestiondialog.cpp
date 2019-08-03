@@ -1,4 +1,4 @@
-#pragma GCC diagnostic push
+
 
 
 
@@ -11,7 +11,7 @@
 #include "openquestiondialogfactory.h"
 
 
-#pragma GCC diagnostic pop
+
 
 ribi::OpenQuestionDialog::OpenQuestionDialog()
   : m_signal_open_question_changed{},

@@ -1,4 +1,4 @@
-#pragma GCC diagnostic push
+
 
 
 #include "qtquestiondialog.h"
@@ -9,7 +9,7 @@
 #include <boost/lambda/lambda.hpp>
 
 #include "questiondialog.h"
-#pragma GCC diagnostic pop
+
 
 
 ribi::QtQuestionDialog::QtQuestionDialog(

@@ -1,7 +1,7 @@
 #ifndef QTMULTIPLECHOICEQUESTIONDIALOG_H
 #define QTMULTIPLECHOICEQUESTIONDIALOG_H
 
-#pragma GCC diagnostic push
+
 
 
 #include <boost/scoped_ptr.hpp>
@@ -11,7 +11,7 @@
 
 #include "questiondialog.h"
 #include "qtquestiondialog.h"
-#pragma GCC diagnostic pop
+
 
 
 namespace Ui {

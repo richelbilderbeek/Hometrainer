@@ -1,4 +1,4 @@
-#pragma GCC diagnostic push
+
 
 
 #include "questiondialog.h"
@@ -12,7 +12,7 @@
 #include "question.h"
 
 
-#pragma GCC diagnostic pop
+
 
 ribi::QuestionDialog::QuestionDialog()
   : m_signal_request_quit{},

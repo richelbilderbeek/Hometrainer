@@ -1,4 +1,4 @@
-#pragma GCC diagnostic push
+
 
 #include "hometrainerresources.h"
 
@@ -9,7 +9,7 @@
 
 #include <QFile>
 
-#pragma GCC diagnostic pop
+
 
 ribi::HometrainerResources::HometrainerResources() //!OCLINT not now
 {

@@ -1,12 +1,12 @@
 #ifndef OPENQUESTIONDIALOG_H
 #define OPENQUESTIONDIALOG_H
 
-#pragma GCC diagnostic push
+
 
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
 #include "questiondialog.h"
-#pragma GCC diagnostic pop
+
 
 namespace ribi {
 

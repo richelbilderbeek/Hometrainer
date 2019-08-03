@@ -1,6 +1,6 @@
 #include "wtmultiplechoicequestiondialog.h"
 
-#pragma GCC diagnostic push
+
 
 
 
@@ -25,7 +25,7 @@
 #include "fileio.h"
 #include "multiplechoicequestiondialog.h"
 #include "multiplechoicequestion.h"
-#pragma GCC diagnostic pop
+
 
 ribi::WtMultipleChoiceQuestionDialog::Ui::Ui()
  : m_button_submit(new Wt::WPushButton("Submit")),

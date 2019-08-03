@@ -23,7 +23,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 #include <vector>
 
-#pragma GCC diagnostic push
+
 
 
 
@@ -31,7 +31,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <boost/shared_ptr.hpp>
 
 #include <Wt/WContainerWidget>
-#pragma GCC diagnostic pop
+
 
 namespace ribi {
 

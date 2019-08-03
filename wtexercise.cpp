@@ -20,7 +20,7 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
 #include <fstream>
 
-#pragma GCC diagnostic push
+
 
 
 
@@ -40,7 +40,7 @@ along with this program.If not, see <http://www.gnu.org/licenses/>.
 #include "wtmultiplechoicequestiondialog.h"
 #include "wtopenquestiondialog.h"
 #include "wtquestiondialog.h"
-#pragma GCC diagnostic pop
+
 
 ribi::WtExercise::Ui::Ui()
   : m_box(new Wt::WGroupBox),

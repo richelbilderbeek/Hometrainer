@@ -20,7 +20,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
 #include "wthometrainerstartexercisedialog.h"
 
-#pragma GCC diagnostic push
+
 
 
 
@@ -48,7 +48,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "wtexercise.h"
 #include "wtopenquestiondialog.h"
 #include "wtmultiplechoicequestiondialog.h"
-#pragma GCC diagnostic pop
+
 
 ribi::WtHometrainerStartExerciseDialog::Ui::Ui()
   : m_box_exercise(new Wt::WGroupBox)

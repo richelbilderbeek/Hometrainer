@@ -1,4 +1,4 @@
-#pragma GCC diagnostic push
+
 
 
 
@@ -20,7 +20,7 @@
 
 #include <QFile>
 
-#pragma GCC diagnostic pop
+
 
 ribi::HometrainerMenuDialog::HometrainerMenuDialog()
 {

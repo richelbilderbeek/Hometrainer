@@ -20,7 +20,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
 #include "wtselecthometrainerfiledialog.h"
 
-#pragma GCC diagnostic push
+
 
 
 
@@ -33,7 +33,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include <Wt/WLineEdit>
 
 #include "fileio.h"
-#pragma GCC diagnostic pop
+
 
 ribi::WtSelectHometrainerFileDialog::WtSelectHometrainerFileDialog()
 {

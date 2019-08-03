@@ -3,7 +3,7 @@
 #include <cassert>
 #include <stdexcept>
 
-#pragma GCC diagnostic push
+
 
 
 
@@ -13,7 +13,7 @@
 #include "container.h"
 #include "openquestion.h"
 
-#pragma GCC diagnostic pop
+
 
 ribi::OpenQuestionFactory::OpenQuestionFactory()
 {

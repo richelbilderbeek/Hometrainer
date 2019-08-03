@@ -5,12 +5,12 @@
 #include <string>
 #include <vector>
 
-#pragma GCC diagnostic push
+
 
 
 
 #include <boost/shared_ptr.hpp>
-#pragma GCC diagnostic pop
+
 
 namespace ribi {
 

@@ -1,4 +1,4 @@
-#pragma GCC diagnostic push
+
 
 
 #include "multiplechoicequestiondialog.h"
@@ -11,7 +11,7 @@
 #include "question.h"
 
 
-#pragma GCC diagnostic pop
+
 
 ribi::MultipleChoiceQuestionDialog::MultipleChoiceQuestionDialog(
   const boost::shared_ptr<const MultipleChoiceQuestion> question)

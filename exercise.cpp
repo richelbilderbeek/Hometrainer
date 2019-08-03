@@ -1,4 +1,4 @@
-#pragma GCC diagnostic push
+
 
 
 #include "exercise.h"
@@ -19,7 +19,7 @@
 
 #include <QFile>
 
-#pragma GCC diagnostic pop
+
 
 ribi::Exercise::Exercise(const std::string& filename)
   : m_current{},

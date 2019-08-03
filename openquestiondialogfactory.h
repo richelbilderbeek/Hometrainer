@@ -1,14 +1,14 @@
 #ifndef OPENQUESTIONDIALOGFACTORY_H
 #define OPENQUESTIONDIALOGFACTORY_H
 
-#pragma GCC diagnostic push
+
 
 
 
 #include <string>
 #include <vector>
 #include <boost/shared_ptr.hpp>
-#pragma GCC diagnostic pop
+
 
 namespace ribi {
 

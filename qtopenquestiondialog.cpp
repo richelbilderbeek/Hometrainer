@@ -1,4 +1,4 @@
-#pragma GCC diagnostic push
+
 
 
 
@@ -13,7 +13,7 @@
 #include "ui_qtopenquestiondialog.h"
 
 #include <QFile>
-#pragma GCC diagnostic pop
+
 
 ribi::QtOpenQuestionDialog::QtOpenQuestionDialog(QWidget *parent)
   : QtQuestionDialog(parent),

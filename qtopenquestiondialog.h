@@ -1,7 +1,7 @@
 #ifndef QTOPENQUESTIONDIALOG_H
 #define QTOPENQUESTIONDIALOG_H
 
-#pragma GCC diagnostic push
+
 
 
 
@@ -12,7 +12,7 @@
 
 #include "questiondialog.h"
 #include "qtquestiondialog.h"
-#pragma GCC diagnostic pop
+
 
 namespace Ui {
   class QtOpenQuestionDialog;

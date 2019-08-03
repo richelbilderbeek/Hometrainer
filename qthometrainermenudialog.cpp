@@ -1,4 +1,4 @@
-#pragma GCC diagnostic push
+
 
 #include "qthometrainermenudialog.h"
 
@@ -13,7 +13,7 @@
 #include "qthometrainermaindialog.h"
 
 #include "ui_qthometrainermenudialog.h"
-#pragma GCC diagnostic pop
+
 
 ribi::QtHometrainerMenuDialog::QtHometrainerMenuDialog(QWidget *parent) noexcept :
     QtHideAndShowDialog(parent),

@@ -20,7 +20,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 //---------------------------------------------------------------------------
 #include "wthometrainermenudialog.h"
 
-#pragma GCC diagnostic push
+
 
 
 
@@ -50,7 +50,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 #include "wtselectfiledialog.h"
 
 #include <QFile>
-#pragma GCC diagnostic pop
+
 
 ribi::WtHometrainerMenuDialog::Ui::Ui()
   : m_load_exercise(new WtHometrainerLoadExerciseDialog),

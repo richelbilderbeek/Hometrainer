@@ -1,4 +1,4 @@
-#pragma GCC diagnostic push
+
 
 
 
@@ -16,7 +16,7 @@
 #include "openquestionfactory.h"
 
 
-#pragma GCC diagnostic pop
+
 
 ribi::OpenQuestion::OpenQuestion(
   const std::string& filename,
