@@ -2,7 +2,7 @@
 #define QTHOMETRAINERMENUDIALOG_H
 
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Weffc++"
+
 #include <boost/shared_ptr.hpp>
 #include "qthideandshowdialog.h"
 #pragma GCC diagnostic pop

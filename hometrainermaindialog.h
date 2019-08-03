@@ -2,7 +2,7 @@
 #define HOMETRAINERMAINDIALOG_H
 
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Weffc++"
+
 #include <vector>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
