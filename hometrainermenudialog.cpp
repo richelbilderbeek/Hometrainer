@@ -29,7 +29,7 @@ ribi::HometrainerMenuDialog::HometrainerMenuDialog()
 
 void ribi::HometrainerMenuDialog::CreateExamples() noexcept
 {
-  HometrainerResources();
+  const HometrainerResources r;
 }
 
 int ribi::HometrainerMenuDialog::ExecuteSpecific(const std::vector<std::string>& argv) noexcept

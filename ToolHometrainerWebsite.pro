@@ -18,9 +18,9 @@ include(ToolHometrainerWebsite.pri)
 
 SOURCES += wtmain.cpp
 
-# C++14
-CONFIG += c++14
-QMAKE_CXXFLAGS += -std=c++14
+# C++17
+CONFIG += c++17
+QMAKE_CXXFLAGS += -std=c++17
 
 # High warning levels
 # Qt does not go well with -Weffc++
@@ -79,19 +79,3 @@ QMAKE_CXXFLAGS += -fext-numeric-literals
 
 # Wt
 LIBS += -lwt -lwthttp
-
-message(Host name: $$QMAKE_HOST.name)
-contains(QMAKE_HOST.name,pc-157-103) {
-  message("Host is university computer in the canteen")
-  QMAKE_CXX = g++-5
-  QMAKE_LINK = g++-5
-  QMAKE_CC = gcc-5
-}
-
-message(Host name: $$QMAKE_HOST.name)
-contains(QMAKE_HOST.name,fwn-biol-132-102) {
-  message("Host is university computer in my office")
-  QMAKE_CXX = g++-5
-  QMAKE_LINK = g++-5
-  QMAKE_CC = gcc-5
-}

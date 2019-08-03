@@ -62,7 +62,10 @@ ribi::WtHometrainerMenuDialog::Ui::Ui()
 ribi::WtHometrainerMenuDialog::WtHometrainerMenuDialog()
   : ui{}
 {
-  HometrainerResources();
+  {
+    //Create resources
+    const HometrainerResources r;
+  }
   ui.m_load_exercise->DoRefresh();
 
   this->setContentAlignment(Wt::AlignCenter);
