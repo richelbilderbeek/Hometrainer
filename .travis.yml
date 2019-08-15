@@ -45,8 +45,8 @@ script:
   - ./ToolHometrainerWebsite &
   - sudo killall -9 ToolHometrainerWebsite
   # Get code coverage
-  - ./get_code_cov
-  - codecov
+  - ./get_code_cov >/dev/null
+  - codecov >/dev/null
   # cppcheck
   - cppcheck --quiet --error-exitcode=1 . 
   # Call OCLint
