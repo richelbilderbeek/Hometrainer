@@ -1,13 +1,4 @@
-
-
-
 #include "qthometrainermaindialog.h"
-
-#include <cassert>
-#include <stdexcept>
-
-#include <QKeyEvent>
-#include <QTimer>
 
 #include "multiplechoicequestion.h"
 #include "multiplechoicequestiondialog.h"
@@ -23,6 +14,12 @@
 
 #include "ui_qthometrainermaindialog.h"
 
+#include <cassert>
+#include <stdexcept>
+#include <sstream>
+
+#include <QKeyEvent>
+#include <QTimer>
 
 
 ribi::QtHometrainerMainDialog::QtHometrainerMainDialog(
