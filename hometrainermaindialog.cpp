@@ -1,6 +1,3 @@
-
-
-
 #include "hometrainermaindialog.h"
 
 #include <cassert>
@@ -8,9 +5,6 @@
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
-
-#include <boost/bind.hpp>
-#include <boost/lambda/lambda.hpp>
 
 #include "fileio.h"
 #include "openquestion.h"
@@ -177,9 +171,9 @@ void ribi::HometrainerMainDialog::Execute()
     assert(m_question_dialog);
     assert(m_question_dialog->GetQuestion());
     m_question_dialog->m_signal_submitted.connect(
-      boost::bind(&ribi::HometrainerMainDialog::OnSubmitted,this,boost::lambda::_1));
+      std::bind(&ribi::HometrainerMainDialog::OnSubmitted,this,boost::lambda::_1));
     m_question_dialog->m_signal_request_quit.connect(
-      boost::bind(&ribi::HometrainerMainDialog::OnRequestQuit,this));
+      std::bind(&ribi::HometrainerMainDialog::OnRequestQuit,this));
 
     //Interface with the user about the current question
     //const std::string s = AskUserForInput();
