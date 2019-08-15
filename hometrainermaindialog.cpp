@@ -41,7 +41,7 @@ ribi::HometrainerMainDialog::HometrainerMainDialog(
   }
 
   #ifndef NDEBUG
-  for(const boost::shared_ptr<const Question> question: m_questions) assert(question);
+  for(const boost::shared_ptr<const Question>& question: m_questions) assert(question);
   #endif
 
   #ifdef NDEBUG
@@ -110,7 +110,7 @@ boost::shared_ptr<ribi::QuestionDialog> ribi::CreateQuestionDialog(
       return d;
     }
   }
-  assert(!"Should not get here");
+  assert(false);
   return nullptr;
 }
 
@@ -125,7 +125,7 @@ std::vector<boost::shared_ptr<const ribi::Question> >
   const std::vector<std::string> text { fileio::FileIo().FileToVector(filename) };
 
   std::vector<boost::shared_ptr<const Question> > v;
-  for (const std::string s: text)
+  for (const std::string& s: text)
   {
     const boost::shared_ptr<const Question> q = CreateQuestion(s);
     //q will be nullptr if no Question could be created
@@ -171,9 +171,17 @@ void ribi::HometrainerMainDialog::Execute()
     assert(m_question_dialog);
     assert(m_question_dialog->GetQuestion());
     m_question_dialog->m_signal_submitted.connect(
-      std::bind(&ribi::HometrainerMainDialog::OnSubmitted,this,boost::lambda::_1));
+      std::bind(
+        &ribi::HometrainerMainDialog::OnSubmitted,this,
+        std::placeholders::_1
+      )
+    );
     m_question_dialog->m_signal_request_quit.connect(
-      std::bind(&ribi::HometrainerMainDialog::OnRequestQuit,this));
+      std::bind(
+        &ribi::HometrainerMainDialog::OnRequestQuit,
+        this
+      )
+    );
 
     //Interface with the user about the current question
     //const std::string s = AskUserForInput();
@@ -194,7 +202,7 @@ boost::shared_ptr<const ribi::Question> ribi::HometrainerMainDialog::GetCurrentQ
 {
   assert(m_current_question_index < static_cast<int>(GetQuestions().size()));
   const boost::shared_ptr<const ribi::Question> question {
-    GetQuestions()[m_current_question_index]
+    GetQuestions()[static_cast<size_t>(m_current_question_index)]
   };
   assert(question);
   return question;
