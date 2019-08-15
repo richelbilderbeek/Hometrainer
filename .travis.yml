@@ -13,7 +13,7 @@ before_install:
 
 install: 
   # Wt
-  - sudo apt-get install witty witty-dbg witty-dev witty-doc
+  #- sudo apt-get install witty witty-dbg witty-dev witty-doc
   # cppcheck
   - sudo apt-get install -qq cppcheck
   # Codecov
@@ -40,10 +40,10 @@ script:
   - ./ToolHometrainerDesktop &
   - sudo killall -9 ToolHometrainerDesktop
   # Build and run website version
-  - qmake -qt=qt5 ToolHometrainerWebsite.pro
-  - make --silent debug
-  - ./ToolHometrainerWebsite &
-  - sudo killall -9 ToolHometrainerWebsite
+  #- qmake -qt=qt5 ToolHometrainerWebsite.pro
+  #- make --silent debug
+  #- ./ToolHometrainerWebsite &
+  #- sudo killall -9 ToolHometrainerWebsite
   # Get code coverage
   - ./get_code_cov >/dev/null
   - codecov >/dev/null
