@@ -98,14 +98,14 @@ void ribi::QtOpenQuestionDialog::SetDialog(const boost::shared_ptr<QuestionDialo
 
     //Disconnect
     m_openquestiondialog->m_signal_open_question_changed.disconnect(
-      boost::bind(&ribi::QtOpenQuestionDialog::OnOpenQuestionDialogChanged,this,boost::lambda::_1)
+      std::bind(&ribi::QtOpenQuestionDialog::OnOpenQuestionDialogChanged,this,std::placeholder::_1)
     );
 
     m_openquestiondialog->m_signal_request_quit.disconnect(
-      boost::bind(&ribi::QtOpenQuestionDialog::OnQuit,this)
+      std::bind(&ribi::QtOpenQuestionDialog::OnQuit,this)
     );
     m_openquestiondialog->m_signal_submitted.disconnect(
-      boost::bind(&ribi::QtOpenQuestionDialog::OnSubmit,this,boost::lambda::_1)
+      std::bind(&ribi::QtOpenQuestionDialog::OnSubmit,this,std::placeholder::_1)
     );
   }
 
@@ -115,13 +115,13 @@ void ribi::QtOpenQuestionDialog::SetDialog(const boost::shared_ptr<QuestionDialo
   assert(m_openquestiondialog->GetOpenQuestion() == open_question_after);
 
   m_openquestiondialog->m_signal_open_question_changed.connect(
-    boost::bind(&ribi::QtOpenQuestionDialog::OnOpenQuestionDialogChanged,this,boost::lambda::_1)
+    std::bind(&ribi::QtOpenQuestionDialog::OnOpenQuestionDialogChanged,this,std::placeholder::_1)
   );
   m_openquestiondialog->m_signal_request_quit.connect(
-    boost::bind(&ribi::QtOpenQuestionDialog::OnQuit,this)
+    std::bind(&ribi::QtOpenQuestionDialog::OnQuit,this)
   );
   m_openquestiondialog->m_signal_submitted.connect(
-    boost::bind(&ribi::QtOpenQuestionDialog::OnSubmit,this,boost::lambda::_1)
+    std::bind(&ribi::QtOpenQuestionDialog::OnSubmit,this,std::placeholder::_1)
   );
 
 

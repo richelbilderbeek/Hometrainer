@@ -4,9 +4,6 @@
 #include "qtmultiplechoicequestiondialog.h"
 
 #include <array>
-#include <boost/bind.hpp>
-#include <boost/lambda/bind.hpp>
-#include <boost/lambda/lambda.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 
@@ -167,7 +164,7 @@ void ribi::QtMultipleChoiceQuestionDialog::SetDialog(const boost::shared_ptr<Que
 
     //Disconnect
     m_dialog->m_signal_mc_question_changed.disconnect(
-      boost::bind(&ribi::QtMultipleChoiceQuestionDialog::OnMultipleChoiceQuestionDialogChanged,this,boost::lambda::_1)
+      std::bind(&ribi::QtMultipleChoiceQuestionDialog::OnMultipleChoiceQuestionDialogChanged,this,std::placeholder::_1)
     );
 
   }
@@ -178,7 +175,7 @@ void ribi::QtMultipleChoiceQuestionDialog::SetDialog(const boost::shared_ptr<Que
   assert(m_dialog->GetMultipleChoiceQuestion() == mc_question_after);
 
   m_dialog->m_signal_mc_question_changed.connect(
-    boost::bind(&ribi::QtMultipleChoiceQuestionDialog::OnMultipleChoiceQuestionDialogChanged,this,boost::lambda::_1)
+    std::bind(&ribi::QtMultipleChoiceQuestionDialog::OnMultipleChoiceQuestionDialogChanged,this,std::placeholder::_1)
   );
 
   //Emit everything that has changed
@@ -198,7 +195,7 @@ void ribi::QtMultipleChoiceQuestionDialog::on_button_submit_clicked() noexcept
 
   if (std::find_if(
     buttons.begin(), buttons.end(),
-    boost::bind(&QRadioButton::isChecked,boost::lambda::_1)
+    std::bind(&QRadioButton::isChecked,std::placeholder::_1)
       == true) == buttons.end()) return;
 
   const std::string index {
@@ -207,7 +204,7 @@ void ribi::QtMultipleChoiceQuestionDialog::on_button_submit_clicked() noexcept
         buttons.begin(),
         std::find_if(
           buttons.begin(), buttons.end(),
-          boost::bind(&QRadioButton::isChecked,boost::lambda::_1) == true
+          std::bind(&QRadioButton::isChecked,std::placeholder::_1) == true
         )
       )
     )

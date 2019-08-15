@@ -6,9 +6,6 @@
 #include <cassert>
 #include <stdexcept>
 
-#include <boost/bind.hpp>
-#include <boost/lambda/lambda.hpp>
-
 #include <QKeyEvent>
 #include <QTimer>
 
@@ -137,7 +134,11 @@ void ribi::QtHometrainerMainDialog::SetQuestion(const boost::shared_ptr<const Qu
   const auto new_qtdialog = CreateQtQuestionDialog(s);
   assert(new_qtdialog);
   new_qtdialog->GetDialog()->m_signal_submitted.connect(
-    boost::bind(&ribi::QtHometrainerMainDialog::OnSubmitted,this,boost::lambda::_1)
+    std::bind(
+      &ribi::QtHometrainerMainDialog::OnSubmitted,
+      this,
+      std::placeholders::_1
+    )
   );  
   if (ui->contents_here->layout())
   {
@@ -148,7 +149,11 @@ void ribi::QtHometrainerMainDialog::SetQuestion(const boost::shared_ptr<const Qu
   if (m_qtdialog)
   {
     new_qtdialog->GetDialog()->m_signal_submitted.disconnect(
-      boost::bind(&ribi::QtHometrainerMainDialog::OnSubmitted,this,boost::lambda::_1)
+      std::bind(
+        &ribi::QtHometrainerMainDialog::OnSubmitted,
+        this,
+        std::placeholders::_1
+      )
     );
   }
   m_qtdialog = new_qtdialog;

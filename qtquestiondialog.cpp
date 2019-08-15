@@ -5,9 +5,6 @@
 
 #include <cassert>
 
-#include <boost/bind.hpp>
-#include <boost/lambda/lambda.hpp>
-
 #include "questiondialog.h"
 
 
