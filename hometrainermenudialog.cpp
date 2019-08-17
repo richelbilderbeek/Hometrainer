@@ -71,19 +71,11 @@ ribi::About ribi::HometrainerMenuDialog::GetAbout() const noexcept
     "Hometrainer",
     "exercise and survey suite",
     "the 23rd of October 2013",
-    "2009-2015",
-    "http://www.richelbilderbeek.nl/ToolHometrainer.htm",
+    "2009-2019",
+    "https://github.com/richelbilderbeek/Hometrainer",
     GetVersion(),
-    GetVersionHistory());
-  a.AddLibrary("Exercise version: " + Exercise::GetVersion());
-  a.AddLibrary("FileIo version: " + ribi::fileio::FileIo().GetVersion());
-  a.AddLibrary("Hometrainer version: " + ribi::HometrainerMenuDialog::GetVersion());
-  a.AddLibrary("MultipleChoiceQuestion version: " + MultipleChoiceQuestion::GetVersion());
-  a.AddLibrary("MultipleChoiceQuestionDialog version: " + MultipleChoiceQuestionDialog::GetVersion());
-  a.AddLibrary("OpenQuestion version: " + OpenQuestion::GetVersion());
-  a.AddLibrary("OpenQuestionDialog version: " + OpenQuestionDialog::GetVersion());
-  a.AddLibrary("Question version: " + Question::GetVersion());
-  a.AddLibrary("QuestionDialog version: " + QuestionDialog::GetVersion());
+    GetVersionHistory()
+  );
   return a;
 }
 

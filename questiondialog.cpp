@@ -15,9 +15,7 @@
 
 
 ribi::QuestionDialog::QuestionDialog()
-  : m_signal_request_quit{},
-    m_signal_submitted{},
-    m_is_correct(Tribool::Indeterminate)
+  : m_is_correct(Tribool::Indeterminate)
 {
   assert(m_is_correct == Tribool::Indeterminate && "Answer is indeterminate at construction");
   assert(!HasSubmitted());
@@ -57,7 +55,6 @@ void ribi::QuestionDialog::Execute()
       const std::string s = AskUserForInput();
       if (s.empty())
       {
-        m_signal_request_quit();
         return;
       }
 
@@ -126,8 +123,6 @@ void ribi::QuestionDialog::SetIsCorrect(const bool is_correct)
 
   assert(HasSubmitted());
   assert(IsAnswerCorrect() == is_correct);
-
-  m_signal_submitted(is_correct);
 }
 
 

@@ -162,10 +162,6 @@ void ribi::QtMultipleChoiceQuestionDialog::SetDialog(const boost::shared_ptr<Que
 
     mc_question_changed = mc_question_before != mc_question_after;
 
-    //Disconnect
-    m_dialog->m_signal_mc_question_changed.disconnect(
-      std::bind(&ribi::QtMultipleChoiceQuestionDialog::OnMultipleChoiceQuestionDialogChanged,this,std::placeholder::_1)
-    );
 
   }
 
@@ -174,15 +170,7 @@ void ribi::QtMultipleChoiceQuestionDialog::SetDialog(const boost::shared_ptr<Que
 
   assert(m_dialog->GetMultipleChoiceQuestion() == mc_question_after);
 
-  m_dialog->m_signal_mc_question_changed.connect(
-    std::bind(&ribi::QtMultipleChoiceQuestionDialog::OnMultipleChoiceQuestionDialogChanged,this,std::placeholder::_1)
-  );
 
-  //Emit everything that has changed
-  if (mc_question_changed)
-  {
-    m_dialog->m_signal_mc_question_changed(m_dialog.get());
-  }
 
   assert(mcquestiondialog == m_dialog);
 }

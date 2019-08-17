@@ -50,8 +50,6 @@ struct MultipleChoiceQuestion : public Question
   std::string ToStr() const noexcept;
 
   private:
-  friend void boost::checked_delete<>(MultipleChoiceQuestion *);
-  ~MultipleChoiceQuestion() noexcept {}
 
   ///All the wrong answers
   const std::vector<std::string> m_wrong_answers;

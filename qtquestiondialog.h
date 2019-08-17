@@ -1,13 +1,7 @@
 #ifndef QTQUESTIONDIALOG_H
 #define QTQUESTIONDIALOG_H
 
-
-
-
-#include <boost/shared_ptr.hpp>
-#include <boost/signals2.hpp>
 #include "qthideandshowdialog.h"
-
 
 namespace ribi {
 
@@ -22,9 +16,6 @@ struct QtQuestionDialog : public QtHideAndShowDialog
 
   virtual boost::shared_ptr<const QuestionDialog> GetDialog() const = 0;
   virtual void SetDialog(const boost::shared_ptr<QuestionDialog>& dialog) = 0;
-
-  static std::string GetVersion() noexcept;
-  static std::vector<std::string> GetVersionHistory() noexcept;
 
   private:
   #ifndef NDEBUG

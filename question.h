@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <boost/checked_delete.hpp>
 
 namespace ribi {
 
@@ -17,9 +16,7 @@ struct Question
     const std::string& question,
     const std::vector<std::string>& correct_answers
   );
-
-  ///Create a copy of the Question, depending on the derived class its type
-  virtual Question * Clone() const noexcept = 0;
+  virtual ~Question();
 
   ///Obtain the correct answer(s)
   const std::vector<std::string>& GetCorrectAnswers() const noexcept { return m_correct_answers; }
@@ -31,12 +28,6 @@ struct Question
   ///Obtain the question
   const std::string& GetQuestion() const noexcept { return m_question; }
 
-  ///Obtain the version
-  static std::string GetVersion() noexcept;
-
-  ///Obtain the version history
-  static std::vector<std::string> GetVersionHistory() noexcept;
-
   ///Would a submitted std::string be the correct answer?
   bool IsCorrect(const std::string& s) const noexcept;
 
@@ -46,12 +37,7 @@ struct Question
   ///Convert to std::string line, as read from file
   virtual std::string ToStr() const noexcept = 0;
 
-  protected:
-  virtual ~Question() noexcept {}
-
   private:
-  friend void boost::checked_delete<>(Question *);
-  friend void boost::checked_delete<>(const Question *);
 
   ///Every Question might have a media filename
   const std::string m_filename;

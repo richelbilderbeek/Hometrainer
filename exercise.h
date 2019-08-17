@@ -4,11 +4,6 @@
 #include <string>
 #include <vector>
 
-
-
-#include <boost/shared_ptr.hpp>
-
-
 namespace ribi {
 
 ///A Exercise is a collection of questions
@@ -36,9 +31,6 @@ struct Exercise
   void Next() noexcept;
 
   private:
-  ~Exercise() noexcept {}
-  friend void boost::checked_delete<>(Exercise *);
-  friend void boost::checked_delete<>(const Exercise *);
 
   ///An iterator pointing to the current question
   std::vector<std::string>::iterator m_current;

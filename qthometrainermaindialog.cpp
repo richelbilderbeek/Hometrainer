@@ -130,29 +130,12 @@ void ribi::QtHometrainerMainDialog::SetQuestion(const boost::shared_ptr<const Qu
   assert(s);
   const auto new_qtdialog = CreateQtQuestionDialog(s);
   assert(new_qtdialog);
-  new_qtdialog->GetDialog()->m_signal_submitted.connect(
-    std::bind(
-      &ribi::QtHometrainerMainDialog::OnSubmitted,
-      this,
-      std::placeholders::_1
-    )
-  );  
   if (ui->contents_here->layout())
   {
     delete ui->contents_here->layout();
   }
   assert(!ui->contents_here->layout());
 
-  if (m_qtdialog)
-  {
-    new_qtdialog->GetDialog()->m_signal_submitted.disconnect(
-      std::bind(
-        &ribi::QtHometrainerMainDialog::OnSubmitted,
-        this,
-        std::placeholders::_1
-      )
-    );
-  }
   m_qtdialog = new_qtdialog;
   if (m_qtdialog)
   {

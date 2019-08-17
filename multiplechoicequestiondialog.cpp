@@ -14,24 +14,20 @@
 
 
 ribi::MultipleChoiceQuestionDialog::MultipleChoiceQuestionDialog(
-  const boost::shared_ptr<const MultipleChoiceQuestion> question)
+  const MultipleChoiceQuestion& question)
   : QuestionDialog{},
-    m_signal_mc_question_changed{},
     m_answer_in_progress{-1},
     m_question(question)
 {
-  assert(GetQuestion());
   assert(!HasSubmitted());
 }
 
 ribi::MultipleChoiceQuestionDialog::MultipleChoiceQuestionDialog(const std::string& question)
   : QuestionDialog{},
-    m_signal_mc_question_changed{},
     m_answer_in_progress{-1},
-    m_question(new MultipleChoiceQuestion(question))
+    m_question{question}
 {
   assert(!HasSubmitted());
-  assert(GetQuestion());
 }
 
 boost::shared_ptr<ribi::MultipleChoiceQuestion>
@@ -47,27 +43,14 @@ boost::shared_ptr<ribi::MultipleChoiceQuestion>
   );
 }
 
-ribi::MultipleChoiceQuestionDialog::~MultipleChoiceQuestionDialog() noexcept
+ribi::MultipleChoiceQuestionDialog::~MultipleChoiceQuestionDialog()
 {
 
 }
 
-boost::shared_ptr<const ribi::Question> ribi::MultipleChoiceQuestionDialog::GetQuestion() const noexcept
+const ribi::Question& ribi::MultipleChoiceQuestionDialog::GetQuestion() const noexcept
 {
   return m_question;
-}
-
-std::string ribi::MultipleChoiceQuestionDialog::GetVersion() noexcept
-{
-  return "1.1";
-}
-
-std::vector<std::string> ribi::MultipleChoiceQuestionDialog::GetVersionHistory() noexcept
-{
-  return {
-    "2011-06-29: version 1.0: initial version",
-    "2013-10-24: version 1.1: added testing"
-  };
 }
 
 void ribi::MultipleChoiceQuestionDialog::Submit(const std::string& s)
@@ -79,21 +62,17 @@ void ribi::MultipleChoiceQuestionDialog::Submit(const std::string& s)
   assert(!HasSubmitted());
   try
   {
-    const int index = boost::lexical_cast<int>(s);
-    const int sz = this->GetMultipleChoiceQuestion()->GetOptions().size();
-    if (index < 0)
-    {
-      throw std::logic_error("Must submit a positive index to a multiple choice question dialog");
-    }
+    const auto index = boost::lexical_cast<size_t>(s);
+    const auto sz = GetMultipleChoiceQuestion().GetOptions().size();
     if (index >= sz)
     {
       throw std::logic_error("Must submit an existing index to a multiple choice question dialog");
     }
     //The real (that is non-index) answer
-    const std::string t = this->GetMultipleChoiceQuestion()->GetOptions()[index];
-    this->SetIsCorrect(GetQuestion()->IsCorrect(t));
+    const std::string t = GetMultipleChoiceQuestion().GetOptions()[index];
+    this->SetIsCorrect(GetQuestion().IsCorrect(t));
   }
-  catch (boost::bad_lexical_cast&)
+  catch (const boost::bad_lexical_cast&)
   {
     throw std::logic_error("Must submit an index to a multiple choice question dialog");
   }
@@ -104,19 +83,9 @@ void ribi::TestMultipleChoiceQuestionDialog() noexcept
   //Test setting the multiple choice questions
   for(const std::string& s: GetValidMultipleChoiceQuestions())
   {
-    const boost::shared_ptr<MultipleChoiceQuestion> q {
-      new MultipleChoiceQuestion(s)
-    };
-    assert(q);
-    #if __cplusplus >= 201402L //C++17
-    const auto d = std::make_unique<MultipleChoiceQuestionDialog>(q);
-    #else
-    const boost::scoped_ptr<MultipleChoiceQuestionDialog> d {
-      new MultipleChoiceQuestionDialog(q)
-    };
-    #endif
-    assert(d);
-    assert(!d->HasSubmitted() );
+    MultipleChoiceQuestion q(s);
+    MultipleChoiceQuestionDialog d(q);
+    assert(!d.HasSubmitted() );
   }
   //Test submitting correct and incorrect answers to this dialog
   {
@@ -126,13 +95,11 @@ void ribi::TestMultipleChoiceQuestionDialog() noexcept
     for (const std::string& s: valid)
     {
       //Create a question
-      const boost::shared_ptr<const MultipleChoiceQuestion> question {
-        new MultipleChoiceQuestion(s)
-      };
+      const MultipleChoiceQuestion question(s);
 
       //Obtain the shuffled possibilities
-      const std::vector<std::string> options = question->GetOptions();
-      assert(options == question->GetOptions()
+      const std::vector<std::string> options = question.GetOptions();
+      assert(options == question.GetOptions()
         && "The possibilities must be shuffled exactly once");
 
       //Submit correct answer to this dialog
@@ -144,10 +111,10 @@ void ribi::TestMultipleChoiceQuestionDialog() noexcept
         };
         assert(!dialog->HasSubmitted());
 
-        const std::string answer = question->GetAnswer();
-        assert(!question->GetWrongAnswers().empty());
+        const std::string answer = question.GetAnswer();
+        assert(!question.GetWrongAnswers().empty());
 
-        const int index = std::distance(options.begin(),std::find(options.begin(),options.end(),answer));
+        const auto index = std::distance(options.begin(),std::find(options.begin(),options.end(),answer));
         assert(index >= 0);
         assert(index < static_cast<int>(options.size()));
 
@@ -165,8 +132,8 @@ void ribi::TestMultipleChoiceQuestionDialog() noexcept
         };
         assert(!dialog->HasSubmitted());
 
-        assert(!question->GetWrongAnswers().empty());
-        const std::string wrong_answer = question->GetWrongAnswers().at(0);
+        assert(!question.GetWrongAnswers().empty());
+        const std::string wrong_answer = question.GetWrongAnswers().at(0);
 
         const int index = std::distance(options.begin(),std::find(options.begin(),options.end(),wrong_answer));
         assert(index >= 0);
@@ -184,6 +151,6 @@ void ribi::TestMultipleChoiceQuestionDialog() noexcept
 std::string ribi::MultipleChoiceQuestionDialog::ToStr() const noexcept
 {
   std::stringstream s;
-  s << m_question->ToStr();
+  s << m_question.ToStr();
   return s.str();
 }

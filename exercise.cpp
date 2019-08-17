@@ -38,8 +38,7 @@ ribi::Exercise::Exercise(const std::string& filename)
   {
     try
     {
-      boost::shared_ptr<QuestionDialog> tmp
-        = OpenQuestionDialogFactory().Create(s);
+      OpenQuestion d(s);
       m_questions.push_back(s);
       continue;
     }
@@ -49,7 +48,7 @@ ribi::Exercise::Exercise(const std::string& filename)
     }
     try
     {
-      boost::shared_ptr<QuestionDialog> tmp(new MultipleChoiceQuestionDialog(s));
+      MultipleChoiceQuestion d(s);
       m_questions.push_back(s);
       continue;
     }

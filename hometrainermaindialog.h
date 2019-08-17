@@ -1,17 +1,15 @@
 #ifndef HOMETRAINERMAINDIALOG_H
 #define HOMETRAINERMAINDIALOG_H
 
-
-
+#include <string>
 #include <vector>
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 
+#include "question.h"
+#include "questiondialog.h"
+#include "multiplechoicequestiondialog.h"
+#include "openquestiondialog.h"
 
 namespace ribi {
-
-struct Question;
-struct QuestionDialog;
 
 ///HometrainerMainDialog loads a collection of questions from file.
 ///From then on, it selects questions and keeps track of the score.
@@ -21,18 +19,18 @@ struct HometrainerMainDialog
   ///Load questions from file
   HometrainerMainDialog(const std::string& filename);
 
-  HometrainerMainDialog(const std::vector<boost::shared_ptr<const ribi::Question> >& questions);
+  HometrainerMainDialog(const std::vector<ribi::Question>& questions);
 
   ///Start the command-line version
   void Execute();
 
-  boost::shared_ptr<const Question> GetCurrentQuestion() const noexcept;
+  const Question& GetCurrentQuestion() const noexcept;
 
   int GetNumberCorrect() const noexcept { return m_n_correct; }
   int GetNumberIncorrect() const noexcept { return m_n_incorrect; }
 
   ///Get the parsed questions
-  std::vector<boost::shared_ptr<const Question>> GetQuestions() const noexcept
+  const std::vector<Question>& GetQuestions() const noexcept
   {
     return m_questions;
   }
@@ -49,11 +47,11 @@ struct HometrainerMainDialog
   ///Number of incorrect answers
   int m_n_incorrect;
 
-  ///Interfacing with the user about a certain Question
-  boost::shared_ptr<QuestionDialog> m_question_dialog;
+  ///The original polymorphic type
+  std::unique_ptr<QuestionDialog> m_question_dialog;
 
   ///The questions loaded
-  std::vector<boost::shared_ptr<const Question> > m_questions;
+  std::vector<Question> m_questions;
 
   ///Does the user want to quit?
   bool m_quit;
@@ -73,14 +71,16 @@ struct HometrainerMainDialog
 
 ///Create a Question from a std::string
 ///Returns nullptr if the string cannot be converted to a question
-boost::shared_ptr<const Question > CreateQuestion(const std::string& s) noexcept;
+std::unique_ptr<Question> CreateQuestion(const std::string& s) noexcept;
 
-std::vector<boost::shared_ptr<const Question>> CreateQuestions(
-    const std::string& filename);
+std::vector<Question> CreateQuestions(
+  const std::string& filename
+);
 
 ///Build the correct dialog for a (derived class of) question
-boost::shared_ptr<QuestionDialog> CreateQuestionDialog(
-  boost::shared_ptr<const Question> question) noexcept;
+std::unique_ptr<QuestionDialog> CreateQuestionDialog(
+  const Question& question
+) noexcept;
 
 void TestHometrainerMainDialog() noexcept;
 

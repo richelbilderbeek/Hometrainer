@@ -96,17 +96,6 @@ void ribi::QtOpenQuestionDialog::SetDialog(const boost::shared_ptr<QuestionDialo
 
     open_question_changed = open_question_before != open_question_after;
 
-    //Disconnect
-    m_openquestiondialog->m_signal_open_question_changed.disconnect(
-      std::bind(&ribi::QtOpenQuestionDialog::OnOpenQuestionDialogChanged,this,std::placeholder::_1)
-    );
-
-    m_openquestiondialog->m_signal_request_quit.disconnect(
-      std::bind(&ribi::QtOpenQuestionDialog::OnQuit,this)
-    );
-    m_openquestiondialog->m_signal_submitted.disconnect(
-      std::bind(&ribi::QtOpenQuestionDialog::OnSubmit,this,std::placeholder::_1)
-    );
   }
 
   //Replace m_example by the new one
@@ -114,38 +103,7 @@ void ribi::QtOpenQuestionDialog::SetDialog(const boost::shared_ptr<QuestionDialo
 
   assert(m_openquestiondialog->GetOpenQuestion() == open_question_after);
 
-  m_openquestiondialog->m_signal_open_question_changed.connect(
-    std::bind(&ribi::QtOpenQuestionDialog::OnOpenQuestionDialogChanged,this,std::placeholder::_1)
-  );
-  m_openquestiondialog->m_signal_request_quit.connect(
-    std::bind(&ribi::QtOpenQuestionDialog::OnQuit,this)
-  );
-  m_openquestiondialog->m_signal_submitted.connect(
-    std::bind(&ribi::QtOpenQuestionDialog::OnSubmit,this,std::placeholder::_1)
-  );
-
-
-  //Emit everything that has changed
-  if (open_question_changed)
-  {
-    m_openquestiondialog->m_signal_open_question_changed(m_openquestiondialog.get());
-  }
-
   assert(openquestiondialog == m_openquestiondialog);
-}
-
-std::string ribi::QtOpenQuestionDialog::GetVersion() noexcept
-{
-  return "1.2";
-}
-
-std::vector<std::string> ribi::QtOpenQuestionDialog::GetVersionHistory() noexcept
-{
-  return {
-    "2011-06-28: version 1.0: initial version",
-    "2014-06-04: version 1.1: added SetDialog member function",
-    "2014-06-13: version 1.2: support for displaying an answer-in-progress"
-  };
 }
 
 void ribi::QtOpenQuestionDialog::OnQuit() noexcept

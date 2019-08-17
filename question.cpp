@@ -26,19 +26,6 @@ ribi::Question::Question(
   }
 }
 
-std::string ribi::Question::GetVersion() noexcept
-{
-  return "1.1";
-}
-
-std::vector<std::string> ribi::Question::GetVersionHistory() noexcept
-{
-  return {
-    "2011-06-27: version 1.0: initial version",
-    "2011-09-16: version 1.1: contructor throws error when input is invalid"
-  };
-}
-
 bool ribi::Question::IsCorrect(const std::string& s) const noexcept
 {
   return std::find(m_correct_answers.begin(),m_correct_answers.end(),s) != m_correct_answers.end();

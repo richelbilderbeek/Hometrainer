@@ -1,7 +1,3 @@
-
-
-
-
 #include "openquestion.h"
 
 #include <cassert>
@@ -14,9 +10,6 @@
 
 #include "imagecanvas.h"
 #include "openquestionfactory.h"
-
-
-
 
 ribi::OpenQuestion::OpenQuestion(
   const std::string& filename,
@@ -43,24 +36,6 @@ ribi::Question * ribi::OpenQuestion::Clone() const noexcept
 //{
 //  this->GetCorrectAnswers()
 //}
-
-
-
-
-std::string ribi::OpenQuestion::GetVersion() noexcept
-{
-  return "1.3";
-}
-
-std::vector<std::string> ribi::OpenQuestion::GetVersionHistory() noexcept
-{
-  return {
-    "2011-06-27: version 1.0: initial version",
-    "2011-09-16: version 1.1: allow parsing from std::string"
-    "2013-10-24: version 1.2: added tests",
-    "2014-06-05: version 1.3: moved parts to OpenQuestionFactory"
-  };
-}
 
 void ribi::TestOpenQuestion() noexcept
 {

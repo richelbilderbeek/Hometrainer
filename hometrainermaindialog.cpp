@@ -1,5 +1,6 @@
 #include "hometrainermaindialog.h"
 
+#include <algorithm>
 #include <cassert>
 #include <ctime>
 #include <fstream>
@@ -26,7 +27,7 @@ ribi::HometrainerMainDialog::HometrainerMainDialog(
 }
 
 ribi::HometrainerMainDialog::HometrainerMainDialog(
-  const std::vector<boost::shared_ptr<const ribi::Question> >& questions)
+  const std::vector<ribi::Question>& questions)
   : m_current_question_index(0),
     m_n_correct(0),
     m_n_incorrect(0),
@@ -40,10 +41,6 @@ ribi::HometrainerMainDialog::HometrainerMainDialog(
     throw std::logic_error("HometrainerMainDialog: no valid question");
   }
 
-  #ifndef NDEBUG
-  for(const boost::shared_ptr<const Question>& question: m_questions) assert(question);
-  #endif
-
   #ifdef NDEBUG
   //Only randomize in release mode
   std::srand(std::time(0));
@@ -52,15 +49,15 @@ ribi::HometrainerMainDialog::HometrainerMainDialog(
   std::random_shuffle(m_questions.begin(),m_questions.end());
 }
 
-boost::shared_ptr<const ribi::Question> ribi::CreateQuestion(
-  const std::string& s) noexcept
+std::unique_ptr<ribi::Question> ribi::CreateQuestion(
+  const std::string& s
+) noexcept
 {
   try
   {
-    const auto q = OpenQuestionFactory().Create(s);
-    //const boost::shared_ptr<const Question> q(new OpenQuestion(s));
+    auto q = std::make_unique<OpenQuestion>(s);
     assert(q);
-    return q;
+    return std::move(q);
   }
   catch (std::exception&)
   {
@@ -68,50 +65,38 @@ boost::shared_ptr<const ribi::Question> ribi::CreateQuestion(
   }
   try
   {
-    //const auto q = MultipleChoiceQuestionFactory().Create(s);
-    const boost::shared_ptr<const Question> q(new MultipleChoiceQuestion(s));
+    auto q = std::make_unique<MultipleChoiceQuestion>(s);
     assert(q);
-    return q;
+    return std::move(q);
   }
   catch (std::exception&)
   {
     //Question could not be parsed
   }
-  boost::shared_ptr<const ribi::Question> q;
+  std::unique_ptr<Question> q;
   assert(!q);
   return q;
 }
 
-boost::shared_ptr<ribi::QuestionDialog> ribi::CreateQuestionDialog(
-  boost::shared_ptr<const Question> question) noexcept
+std::unique_ptr<ribi::QuestionDialog> ribi::CreateQuestionDialog(
+  const Question& question) noexcept
 {
-  assert(question);
   //Open q
   try
   {
-    const auto d = OpenQuestionDialogFactory().Create(question->ToStr());
-    if (d) return d;
+    auto d = std::make_unique<OpenQuestionDialog>(question.ToStr());
+    if (d) return std::move(d);
   }
-  catch (std::logic_error&)
+  catch (const std::logic_error&)
   {
     //OK
   }
   {
-    const boost::shared_ptr<const MultipleChoiceQuestion> mc_question {
-      boost::dynamic_pointer_cast<const MultipleChoiceQuestion>(question)
-    };
-    if (mc_question)
-    {
-      assert(mc_question);
-      const boost::shared_ptr<ribi::QuestionDialog> d {
-        new MultipleChoiceQuestionDialog(mc_question)
-      };
-      assert(d);
-      return d;
-    }
+    auto d = std::make_unique<MultipleChoiceQuestionDialog>(question.ToStr());
+    if (d) return std::move(d);
   }
   assert(false);
-  return nullptr;
+  return {};
 }
 
 std::vector<boost::shared_ptr<const ribi::Question> >
@@ -169,19 +154,6 @@ void ribi::HometrainerMainDialog::Execute()
     assert(GetCurrentQuestion());
     m_question_dialog = CreateQuestionDialog(GetCurrentQuestion());
     assert(m_question_dialog);
-    assert(m_question_dialog->GetQuestion());
-    m_question_dialog->m_signal_submitted.connect(
-      std::bind(
-        &ribi::HometrainerMainDialog::OnSubmitted,this,
-        std::placeholders::_1
-      )
-    );
-    m_question_dialog->m_signal_request_quit.connect(
-      std::bind(
-        &ribi::HometrainerMainDialog::OnRequestQuit,
-        this
-      )
-    );
 
     //Interface with the user about the current question
     //const std::string s = AskUserForInput();

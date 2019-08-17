@@ -1,9 +1,6 @@
 #ifndef QTHOMETRAINERMENUDIALOG_H
 #define QTHOMETRAINERMENUDIALOG_H
 
-
-
-#include <boost/shared_ptr.hpp>
 #include "qthideandshowdialog.h"
 
 

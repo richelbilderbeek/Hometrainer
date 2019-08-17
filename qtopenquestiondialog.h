@@ -1,13 +1,6 @@
 #ifndef QTOPENQUESTIONDIALOG_H
 #define QTOPENQUESTIONDIALOG_H
 
-
-
-
-
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
-
 #include "qthideandshowdialog.h"
 
 #include "questiondialog.h"
