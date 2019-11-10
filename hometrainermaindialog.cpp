@@ -7,6 +7,8 @@
 #include <iostream>
 #include <stdexcept>
 
+#include <boost/shared_ptr.hpp>
+
 #include "fileio.h"
 #include "openquestion.h"
 #include "openquestionfactory.h"
