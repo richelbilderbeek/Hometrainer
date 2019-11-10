@@ -1,11 +1,8 @@
-
-
-
 #include "exercise.h"
 
+#include <cassert>
 #include <fstream>
 #include <stdexcept>
-
 
 #include <boost/numeric/conversion/cast.hpp>
 
@@ -15,11 +12,8 @@
 #include "openquestion.h"
 #include "openquestiondialog.h"
 #include "openquestiondialogfactory.h"
-//
 
 #include <QFile>
-
-
 
 ribi::Exercise::Exercise(const std::string& filename)
   : m_current{},
