@@ -1,10 +1,5 @@
 # Hometrainer
 
-Branch|[![Travis CI logo](pics/TravisCI.png)](https://travis-ci.org)|[![Codecov logo](pics/Codecov.png)](https://www.codecov.io)
----|---|---
-master|[![Build Status](https://travis-ci.org/richelbilderbeek/Hometrainer.svg?branch=master)](https://travis-ci.org/richelbilderbeek/Hometrainer)|[![codecov.io](https://codecov.io/github/richelbilderbeek/Hometrainer/coverage.svg?branch=master)](https://codecov.io/github/richelbilderbeek/Hometrainer/branch/master)
-develop|[![Build Status](https://travis-ci.org/richelbilderbeek/Hometrainer.svg?branch=develop)](https://travis-ci.org/richelbilderbeek/Hometrainer)|[![codecov.io](https://codecov.io/github/richelbilderbeek/Hometrainer/coverage.svg?branch=develop)](https://codecov.io/github/richelbilderbeek/Hometrainer/branch/develop)
-
 Hometrainer is desktop tool to train self-made exercises with open questions 
 and multiple choice questions, with or without images. The exercises are
 created by use of a simple text editor (Notepad, for example). 
