@@ -53,7 +53,6 @@ The [website](https://richelbilderbeek.github.io/Hometrainer/) has the up-to-dat
 
 ## Links to similar freeware programs
 
-- [WordFox](http://wordfox.byethost17.com/wordfox/index.php)
 - [Quiz](http://www.luziusschneider.com/QuizHome.htm): for multiple-choice questions only
 - [Questiontools Suite](http://www.questiontools.org/): extensive test generation suite, but commercial for companies
 
