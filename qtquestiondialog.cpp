@@ -9,6 +9,7 @@
 #include <QVBoxLayout>
 
 #include "hometrainerhelper.h"
+#include "qthometrainerhelper.h"
 #include "question.h"
 #include "questiondialog.h"
 
@@ -57,14 +58,14 @@ bool ribi::QtQuestionDialog::eventFilter(QObject * object, QEvent * event)
 
 void ribi::ShowImageFullSize(const QString& filename, QWidget * const parent)
 {
-  QDialog d(parent);
-  d.setWindowTitle(GetFileBasename(filename.toStdString()).c_str());
+  QDialog * const d = new QDialog(parent);
+  d->setWindowTitle(GetFileBasename(filename.toStdString()).c_str());
   QLabel * const label = new QLabel;
   label->setPixmap(QPixmap(filename));
   QScrollArea * const area = new QScrollArea;
   area->setWidget(label);
-  QVBoxLayout * const layout = new QVBoxLayout(&d);
+  QVBoxLayout * const layout = new QVBoxLayout(d);
   layout->addWidget(area);
-  d.resize(800, 600);
-  d.exec();
+  d->resize(800, 600);
+  ShowDialog(d);
 }

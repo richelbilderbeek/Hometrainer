@@ -24,3 +24,5 @@ VCL
 Richel
 Bilderbeek
 github
+WebAssembly
+Emscripten

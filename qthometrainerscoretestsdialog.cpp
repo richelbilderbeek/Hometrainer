@@ -1,5 +1,6 @@
 #include "qthometrainerscoretestsdialog.h"
 
+#include <algorithm>
 #include <cassert>
 #include <cstdio>
 #include <stdexcept>
@@ -11,6 +12,7 @@
 #include "hometrainerhelper.h"
 #include "hometrainertestresults.h"
 #include "hometrainertestscorer.h"
+#include "qthometrainerhelper.h"
 
 #include "ui_qthometrainerscoretestsdialog.h"
 
@@ -21,6 +23,10 @@ ribi::QtHometrainerScoreTestsDialog::QtHometrainerScoreTestsDialog(QWidget *pare
     m_scorer{}
 {
   ui->setupUi(this);
+  if (IsWebAssembly())
+  {
+    ui->button_select->setText("Add test results");
+  }
   for (QTableWidget * const table: { ui->table_students, ui->table_questions })
   {
     table->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
@@ -79,25 +85,29 @@ void ribi::QtHometrainerScoreTestsDialog::DisplayScores()
 void ribi::QtHometrainerScoreTestsDialog::on_button_save_clicked()
 {
   assert(m_scorer);
-  const QString filename = QFileDialog::getSaveFileName(
-    this, "Save the scores", QString::fromStdString(m_filenames.empty() ? "" : GetPath(m_filenames[0])),
-    "Comma-seperated files (*.csv);;All files (*)"
+  const std::string folder = m_filenames.empty() ? "" : GetPath(m_filenames[0]);
+  const std::vector<std::string> questions = m_scorer->QuestionScoresToCsv();
+  SaveFile(this, "Save the scores", JoinPath(folder, "scores.csv"),
+    "Comma-seperated files (*.csv);;All files (*)", m_scorer->StudentScoresToCsv(),
+    [this, questions](const std::string& filename)
+    {
+      const std::string questions_filename = RemoveExtension(filename) + "_questions.csv";
+      try
+      {
+        SaveContainer(questions, questions_filename);
+        if (IsWebAssembly()) DownloadFile(questions_filename);
+      }
+      catch (std::exception& e)
+      {
+        ShowMessage(this, e.what(), QMessageBox::Warning);
+        return;
+      }
+      ShowMessage(this,
+        "Student scores saved to '" + QString::fromStdString(filename) + "'\n"
+        "Question scores saved to '" + QString::fromStdString(questions_filename) + "'"
+      );
+    }
   );
-  if (filename.isEmpty()) return;
-  try
-  {
-    SaveContainer(m_scorer->StudentScoresToCsv(), filename.toStdString());
-    const std::string questions_filename = RemoveExtension(filename.toStdString()) + "_questions.csv";
-    SaveContainer(m_scorer->QuestionScoresToCsv(), questions_filename);
-    QMessageBox::information(this, "Hometrainer",
-      "Student scores saved to '" + filename + "'\n"
-      "Question scores saved to '" + QString::fromStdString(questions_filename) + "'"
-    );
-  }
-  catch (std::exception& e)
-  {
-    QMessageBox::warning(this, "Hometrainer", e.what());
-  }
 }
 
 void ribi::QtHometrainerScoreTestsDialog::on_button_score_clicked()
@@ -108,20 +118,29 @@ void ribi::QtHometrainerScoreTestsDialog::on_button_score_clicked()
   }
   catch (std::exception& e)
   {
-    QMessageBox::warning(this, "Hometrainer", e.what());
+    ShowMessage(this, e.what(), QMessageBox::Warning);
   }
 }
 
 void ribi::QtHometrainerScoreTestsDialog::on_button_select_clicked()
 {
-  const QStringList filenames = QFileDialog::getOpenFileNames(
-    this, "Please select the test results of the students", QString(),
-    "Test results (*.txt);;All files (*)"
+  OpenFiles(this, "Please select the test results of the students", "Test results (*.txt);;All files (*)",
+    [this](const std::vector<std::string>& filenames)
+    {
+      if (!IsWebAssembly())
+      {
+        SetFilenames(filenames);
+        return;
+      }
+      //In a web browser, files are uploaded one at a time
+      std::vector<std::string> v = m_filenames;
+      for (const auto& filename: filenames)
+      {
+        if (std::find(v.begin(), v.end(), filename) == v.end()) v.push_back(filename);
+      }
+      SetFilenames(v);
+    }
   );
-  if (filenames.isEmpty()) return;
-  std::vector<std::string> v;
-  for (const auto& s: filenames) { v.push_back(s.toStdString()); }
-  SetFilenames(v);
 }
 
 void ribi::QtHometrainerScoreTestsDialog::Score()

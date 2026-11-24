@@ -14,6 +14,7 @@
 #include "multiplechoicequestion.h"
 #include "openquestion.h"
 #include "openquestionfactory.h"
+#include "qthometrainerhelper.h"
 #include "qtmultiplechoicequestiondialog.h"
 #include "qtopenquestiondialog.h"
 #include "ui_qthometrainermaindialog.h"
@@ -90,12 +91,23 @@ void ribi::QtHometrainerMainDialog::OnSubmitted(const bool is_correct)
   {
     if (m_dialog->IsDone())
     {
+      const std::string filename = m_dialog->GetTestSession()->m_results_filename;
       if (isVisible())
       {
-        QMessageBox::information(this, "Hometrainer",
-          QString("Test done. Your results are saved to '")
-          + m_dialog->GetTestSession()->m_results_filename.c_str() + "'"
-        );
+        //Show the message on the parent, as this dialog is closed
+        if (IsWebAssembly())
+        {
+          ShowMessage(parentWidget(), "Test done. Your results are downloaded as '"
+            + QString::fromStdString(GetFileBasename(filename)) + "'. Hand in this file to your teacher."
+          );
+          DownloadFile(filename);
+        }
+        else
+        {
+          ShowMessage(parentWidget(), "Test done. Your results are saved to '"
+            + QString::fromStdString(filename) + "'. Hand in this file to your teacher."
+          );
+        }
       }
       close();
       return;

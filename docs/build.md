@@ -2,7 +2,7 @@
 
 Hometrainer is written in C++ and uses Qt.
 The Windows version is built automatically and can be
-[downloaded from the start page](README.md#download).
+[downloaded from the start page](README.md#run-or-download).
 
 To build Hometrainer yourself, install Qt 6 and a C++17 compiler, then:
 

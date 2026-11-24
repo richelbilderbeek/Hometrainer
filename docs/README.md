@@ -17,8 +17,9 @@ Hometrainer can:
   with an optional answer code that makes grading easier
 - be used [from the command line](command_line.md)
 
-## Download
+## Run or download
 
+- [Run Hometrainer in your web browser](run.md)
 - [Download the Windows version](https://richelbilderbeek.github.io/Hometrainer/hometrainer_windows.zip):
   unzip it and run `ToolHometrainerDesktop.exe`
 - [Example exercises](https://github.com/richelbilderbeek/Hometrainer/tree/main/examples),

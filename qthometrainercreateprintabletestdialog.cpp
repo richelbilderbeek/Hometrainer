@@ -10,6 +10,7 @@
 #include "hometrainerhelper.h"
 #include "hometrainerprintabletest.h"
 #include "qthometrainercreatetestdialog.h"
+#include "qthometrainerhelper.h"
 #include "question.h"
 
 #include "ui_qthometrainercreateprintabletestdialog.h"
@@ -44,7 +45,7 @@ bool ribi::QtHometrainerCreatePrintableTestDialog::CreatePrintableTest()
   }
   catch (std::exception& e)
   {
-    if (isVisible()) QMessageBox::warning(this, "Hometrainer", e.what());
+    if (isVisible()) ShowMessage(this, e.what(), QMessageBox::Warning);
     return false;
   }
   ui->edit_printable->setPlainText(ToText(m_printable_test));
@@ -64,41 +65,37 @@ void ribi::QtHometrainerCreatePrintableTestDialog::on_button_create_clicked()
 
 void ribi::QtHometrainerCreatePrintableTestDialog::on_button_load_clicked()
 {
-  const QString filename = QFileDialog::getOpenFileName(
-    this, "Please select a Hometrainer exercise", m_folder, "Hometrainer exercises (*.txt);;All files (*)"
+  OpenExercise(this,
+    [this](const std::string& filename)
+    {
+      try
+      {
+        SetExercise(FileToVector(filename));
+        m_folder = QString::fromStdString(GetPath(filename));
+      }
+      catch (std::exception& e)
+      {
+        ShowMessage(this, e.what(), QMessageBox::Warning);
+      }
+    }
   );
-  if (filename.isEmpty()) return;
-  try
-  {
-    SetExercise(FileToVector(filename.toStdString()));
-    m_folder = QString::fromStdString(GetPath(filename.toStdString()));
-  }
-  catch (std::exception& e)
-  {
-    QMessageBox::warning(this, "Hometrainer", e.what());
-  }
 }
 
 void ribi::QtHometrainerCreatePrintableTestDialog::on_button_save_clicked()
 {
   const bool html = ui->box_format->currentIndex() == 0;
-  const QString filename = QFileDialog::getSaveFileName(
-    this, "Save the test on paper", m_folder,
-    html ? "Web pages (*.html);;All files (*)" : "Text files (*.txt);;All files (*)"
+  SaveFile(this, "Save the test on paper",
+    JoinPath(m_folder.toStdString(), html ? "test.html" : "test.txt"),
+    html ? "Web pages (*.html);;All files (*)" : "Text files (*.txt);;All files (*)",
+    m_printable_test,
+    [this, html](const std::string& filename)
+    {
+      ShowMessage(this,
+        "Test on paper saved to '" + QString::fromStdString(filename) + "'.\n\n"
+        + (html ? "Images are shown if they are in the same folder." : "")
+      );
+    }
   );
-  if (filename.isEmpty()) return;
-  try
-  {
-    SaveContainer(m_printable_test, filename.toStdString());
-    QMessageBox::information(this, "Hometrainer",
-      "Test on paper saved to '" + filename + "'.\n\n"
-      + (html ? "Images are shown if they are in the same folder." : "")
-    );
-  }
-  catch (std::exception& e)
-  {
-    QMessageBox::warning(this, "Hometrainer", e.what());
-  }
 }
 
 void ribi::QtHometrainerCreatePrintableTestDialog::on_edit_exercise_textChanged()

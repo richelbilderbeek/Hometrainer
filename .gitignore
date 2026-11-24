@@ -46,5 +46,7 @@ release/
 
 # Generated when building the website
 /docs/hometrainer_windows.zip
+/docs/app/
+run_page.png
 /site/
 wordlist.dic

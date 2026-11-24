@@ -3,6 +3,7 @@ include(ToolHometrainerConsole.pri)
 SOURCES += \
     $$PWD/qthometrainercreateprintabletestdialog.cpp \
     $$PWD/qthometrainercreatetestdialog.cpp \
+    $$PWD/qthometrainerhelper.cpp \
     $$PWD/qthometrainermaindialog.cpp \
     $$PWD/qthometrainermenudialog.cpp \
     $$PWD/qthometrainerscoretestsdialog.cpp \
@@ -13,6 +14,7 @@ SOURCES += \
 HEADERS  += \
     $$PWD/qthometrainercreateprintabletestdialog.h \
     $$PWD/qthometrainercreatetestdialog.h \
+    $$PWD/qthometrainerhelper.h \
     $$PWD/qthometrainermaindialog.h \
     $$PWD/qthometrainermenudialog.h \
     $$PWD/qthometrainerscoretestsdialog.h \

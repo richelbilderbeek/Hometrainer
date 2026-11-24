@@ -1,4 +1,8 @@
 # Adapted from https://zensical.org/docs/publish-your-site/#with-github-actions
+#
+# Builds the Windows version (using build.yaml) and the WebAssembly version
+# of Hometrainer, then creates and deploys the website.
+# The WebAssembly version is put on the 'Run' page of the website.
 name: Create Zensical website
 
 on:
@@ -16,6 +20,7 @@ on:
       - '*.ui'
       - 'docs/**'
       - 'resources/**'
+      - 'scripts/**'
       - zensical.toml
   workflow_dispatch:
 
@@ -24,12 +29,85 @@ permissions:
   pages: write
   id-token: write
 
+env:
+  # A version of Qt only works with one version of Emscripten, see
+  # https://doc.qt.io/qt-6/wasm.html#installing-emscripten
+  QT_VERSION: 6.8.3
+  EMSCRIPTEN_VERSION: 3.1.56
+
 jobs:
   build:
     uses: ./.github/workflows/build.yaml
 
+  build_wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: all_os
+          target: wasm
+          arch: wasm_singlethread
+          cache: true
+
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: ${{ env.EMSCRIPTEN_VERSION }}
+
+      - name: Build the WebAssembly version
+        run: |
+          mkdir build_wasm
+          cd build_wasm
+          qmake ../ToolHometrainerDesktop.pro
+          make --silent
+
+      - name: Collect the files needed to run Hometrainer
+        run: |
+          mkdir wasm
+          cd build_wasm
+          cp ToolHometrainerDesktop.html ToolHometrainerDesktop.js ToolHometrainerDesktop.wasm qtloader.js qtlogo.svg ../wasm/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hometrainer_wasm
+          path: wasm
+          if-no-files-found: error
+
+  test_run_page:
+    needs: build_wasm
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: hometrainer_wasm
+          path: docs/app
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+
+      - run: pip install pillow playwright zensical
+      - run: playwright install --with-deps chromium
+      - run: zensical build --clean --strict
+
+      - name: Run Hometrainer on the website
+        run: |
+          python -m http.server 8000 --directory site &
+          sleep 1
+          python scripts/test_run_page.py http://localhost:8000/run/
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: run_page_screenshot
+          path: run_page.png
+
   create_zensical_website:
-    needs: build
+    needs: [build, test_run_page]
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -42,6 +120,10 @@ jobs:
           name: hometrainer_windows
           path: hometrainer_windows
       - run: zip -r docs/hometrainer_windows.zip hometrainer_windows
+      - uses: actions/download-artifact@v4
+        with:
+          name: hometrainer_wasm
+          path: docs/app
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x

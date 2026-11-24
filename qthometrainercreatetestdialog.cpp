@@ -8,6 +8,7 @@
 
 #include "hometrainerhelper.h"
 #include "hometrainertestfile.h"
+#include "qthometrainerhelper.h"
 #include "question.h"
 
 #include "ui_qthometrainercreatetestdialog.h"
@@ -41,7 +42,7 @@ bool ribi::QtHometrainerCreateTestDialog::CreateTest()
   }
   catch (std::exception& e)
   {
-    if (isVisible()) QMessageBox::warning(this, "Hometrainer", e.what());
+    if (isVisible()) ShowMessage(this, e.what(), QMessageBox::Warning);
     return false;
   }
   ui->edit_test->setPlainText(ToText(m_test));
@@ -56,40 +57,35 @@ void ribi::QtHometrainerCreateTestDialog::on_button_create_clicked()
 
 void ribi::QtHometrainerCreateTestDialog::on_button_load_clicked()
 {
-  const QString filename = QFileDialog::getOpenFileName(
-    this, "Please select a Hometrainer exercise", m_folder, "Hometrainer exercises (*.txt);;All files (*)"
+  OpenExercise(this,
+    [this](const std::string& filename)
+    {
+      try
+      {
+        SetExercise(FileToVector(filename));
+        m_folder = QString::fromStdString(GetPath(filename));
+      }
+      catch (std::exception& e)
+      {
+        ShowMessage(this, e.what(), QMessageBox::Warning);
+      }
+    }
   );
-  if (filename.isEmpty()) return;
-  try
-  {
-    SetExercise(FileToVector(filename.toStdString()));
-    m_folder = QString::fromStdString(GetPath(filename.toStdString()));
-  }
-  catch (std::exception& e)
-  {
-    QMessageBox::warning(this, "Hometrainer", e.what());
-  }
 }
 
 void ribi::QtHometrainerCreateTestDialog::on_button_save_clicked()
 {
-  const QString filename = QFileDialog::getSaveFileName(
-    this, "Save the test", m_folder, "Hometrainer tests (*.txt);;All files (*)"
+  SaveFile(this, "Save the test", JoinPath(m_folder.toStdString(), "test.txt"),
+    "Hometrainer tests (*.txt);;All files (*)", m_test,
+    [this](const std::string& filename)
+    {
+      ShowMessage(this,
+        "Test saved to '" + QString::fromStdString(filename) + "'.\n\n"
+        "Remember the key, as it is needed to do the test and to score it.\n"
+        "Put the images used by the test in the same folder as the test."
+      );
+    }
   );
-  if (filename.isEmpty()) return;
-  try
-  {
-    SaveContainer(m_test, filename.toStdString());
-    QMessageBox::information(this, "Hometrainer",
-      "Test saved to '" + filename + "'.\n\n"
-      "Remember the key, as it is needed to do the test and to score it.\n"
-      "Put the images used by the test in the same folder as the test."
-    );
-  }
-  catch (std::exception& e)
-  {
-    QMessageBox::warning(this, "Hometrainer", e.what());
-  }
 }
 
 void ribi::QtHometrainerCreateTestDialog::on_edit_exercise_textChanged()

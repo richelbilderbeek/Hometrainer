@@ -5,7 +5,10 @@ CONFIG += c++17
 # High warning levels
 # Qt does not go well with -Weffc++
 !msvc {
-  QMAKE_CXXFLAGS += -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic -Werror
+  QMAKE_CXXFLAGS += -Wall -Wextra -Wshadow -Wnon-virtual-dtor -pedantic
+
+  # Emscripten (used for WebAssembly) has its own warnings
+  !wasm: QMAKE_CXXFLAGS += -Werror
 
   # The test functions only use some variables in an assert,
   # which are unused when NDEBUG is defined.
