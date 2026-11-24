@@ -132,5 +132,8 @@ jobs:
       - uses: actions/upload-pages-artifact@v4
         with:
           path: site
+      # GitHub does not always list a just-uploaded artifact directly
+      - name: Wait for the website artifact to be listed
+        run: sleep 30
       - uses: actions/deploy-pages@v4
         id: deployment
