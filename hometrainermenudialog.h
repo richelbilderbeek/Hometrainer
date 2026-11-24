@@ -1,28 +1,43 @@
 #ifndef HOMETRAINERMENUDIALOG_H
 #define HOMETRAINERMENUDIALOG_H
 
-#include "about.h"
-#include "menudialog.h"
+#include <string>
+#include <vector>
 
 namespace ribi {
 
 ///The logic behind the menu dialog
-struct HometrainerMenuDialog final : public MenuDialog
+struct HometrainerMenuDialog final
 {
   HometrainerMenuDialog();
 
-  ///Create the example exercises
-  static void CreateExamples() noexcept;
+  ///Create the example exercises in the current folder
+  static void CreateExamples();
 
-  ///Execute Hometrainer from the command line
+  ///Execute Hometrainer from the command line.
+  ///The first element of argv is the program name.
   ///The return code is the error code given back to main
-  int ExecuteSpecific(const std::vector<std::string>& argv) noexcept override;
+  int Execute(const std::vector<std::string>& argv) noexcept;
 
-  About GetAbout() const noexcept override;
-  Help GetHelp() const noexcept override;
-  std::string GetVersion() const noexcept override;
-  std::vector<std::string> GetVersionHistory() const noexcept override;
+  ///Obtain information about this program, one line per element
+  std::vector<std::string> GetAbout() const noexcept;
+
+  ///Obtain an example exercise, one line per element
+  std::vector<std::string> GetExample() const noexcept;
+
+  ///Obtain the help text of the command line version, one line per element
+  std::vector<std::string> GetHelp() const noexcept;
+
+  std::string GetVersion() const noexcept;
+  std::vector<std::string> GetVersionHistory() const noexcept;
+
+  private:
+  ///Execute Hometrainer from the command line, which may throw
+  int ExecuteImpl(const std::vector<std::string>& argv);
 };
+
+///Convert the arguments of main to a std::vector
+std::vector<std::string> ConvertArguments(const int argc, const char * const argv[]) noexcept;
 
 void TestHometrainerMenuDialog() noexcept;
 

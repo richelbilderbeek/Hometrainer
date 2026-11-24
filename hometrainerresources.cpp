@@ -1,181 +1,59 @@
-
-
 #include "hometrainerresources.h"
 
 #include <cassert>
-#include <iostream>
 #include <stdexcept>
 
-
+#include <QDirIterator>
 #include <QFile>
 
+#include "hometrainerhelper.h"
+#include "question.h"
 
-
-ribi::HometrainerResources::HometrainerResources() //!OCLINT not now
+ribi::HometrainerResources::HometrainerResources()
 {
+  for (const QString& folder: { QString(":/resources"), QString(":/docs") })
   {
-    const std::vector<std::string> files
-      =
-      {
-        GetQuestion(),
-        GetQuestionMark(),
-        GetWelcome(),
-        "ToolHometrainerExerciseAdapter.jpg",
-        "ToolHometrainerExerciseAuks.jpg",
-        "ToolHometrainerExerciseBakMetFilters.jpg",
-        "ToolHometrainerExerciseCdSpelerNumarck.jpg",
-        "ToolHometrainerExerciseDcc.jpg",
-        "ToolHometrainerExerciseDi.jpg",
-        "ToolHometrainerExerciseDimmerpack.jpg",
-        "ToolHometrainerExerciseDmxMannetjeConnector.jpg",
-        "ToolHometrainerExerciseDmxMannetje.jpg",
-        "ToolHometrainerExerciseDmxVrouwtjeConnector.jpg",
-        "ToolHometrainerExerciseDmxVrouwtje.jpg",
-        "ToolHometrainerExerciseEffect.jpg",
-        "ToolHometrainerExerciseEuroMannetjeConnector.jpg",
-        "ToolHometrainerExerciseEuroVrouwtje.jpg",
-        "ToolHometrainerExerciseFilterboekje.jpg",
-        "ToolHometrainerExerciseFilterhouder.jpg",
-        "ToolHometrainerExerciseFilter.jpg",
-        "ToolHometrainerExerciseFiltervellen.jpg",
-        "ToolHometrainerExerciseFlightcase.jpg",
-        "ToolHometrainerExerciseFresnel.jpg",
-        "ToolHometrainerExerciseGeluidstafelAchterkantLinks.jpg",
-        "ToolHometrainerExerciseGeluidstafelAchterkantRechts.jpg",
-        "ToolHometrainerExerciseGeluidstafelAlesis.jpg",
-        "ToolHometrainerExerciseGeluidstafelBovenkantMiddenboven.jpg",
-        "ToolHometrainerExerciseGeluidstafelBovenkantMidden.jpg",
-        "ToolHometrainerExerciseGeluidstafelBovenkantRechtsboven.jpg",
-        "ToolHometrainerExerciseGeluidstafelBovenkantRechtsonder.jpg",
-        "ToolHometrainerExerciseGeluidstafelYamaha.jpg",
-        "ToolHometrainerExerciseGordijnhaak.jpg",
-        "ToolHometrainerExerciseHaspel.jpg",
-        "ToolHometrainerExerciseJackMannetjeMono.jpg",
-        "ToolHometrainerExerciseJackVrouwtjeConnector.jpg",
-        "ToolHometrainerExerciseJackVrouwtjeEnXlrVrouwtjeConnector.jpg",
-        "ToolHometrainerExerciseKabeltester.jpg",
-        "ToolHometrainerExerciseKrachtstroomMannetjeConnector.jpg",
-        "ToolHometrainerExerciseKrachtstroomMannetje.jpg",
-        "ToolHometrainerExerciseKrachtstroomVrouwtjeConnector.jpg",
-        "ToolHometrainerExerciseLamp500W.jpg",
-        "ToolHometrainerExerciseLichtplanDeBruiloften.jpg",
-        "ToolHometrainerExerciseLichtplan.jpg",
-        "ToolHometrainerExerciseLichttafel.jpg",
-        "ToolHometrainerExerciseMdGrijs.jpg",
-        "ToolHometrainerExerciseMdSpeler.jpg",
-        "ToolHometrainerExerciseMdTransparent.jpg",
-        "ToolHometrainerExerciseMicrofoonShureSm58.jpg",
-        "ToolHometrainerExerciseMiniJackStereoVrouwJackStereoMan.jpg",
-        "ToolHometrainerExerciseMonitorTorqueConnectors.jpg",
-        "ToolHometrainerExerciseMultikabelMannetjeConnector.jpg",
-        "ToolHometrainerExerciseMultikabelVrouwtjeConnector.jpg",
-        "ToolHometrainerExerciseMultimeterMetex.jpg",
-        "ToolHometrainerExerciseMultiplication.txt",
-        "ToolHometrainerExerciseMultistekkerdoos.jpg",
-        "ToolHometrainerExerciseOn.jpg",
-        "ToolHometrainerExerciseOpwindstatief.jpg",
-        "ToolHometrainerExercisePar.jpg",
-        "ToolHometrainerExercisePc.jpg",
-        "ToolHometrainerExercisePriklijst.jpg",
-        "ToolHometrainerExerciseProfielspot.jpg",
-        "ToolHometrainerExerciseRcf322aAchterkant.jpg",
-        "ToolHometrainerExerciseRgbLamp.jpg",
-        "ToolHometrainerExerciseSafety.jpg",
-        "ToolHometrainerExerciseScartMannetje.jpg",
-        "ToolHometrainerExerciseSchukoVrouwtjeConnector.jpg",
-        "ToolHometrainerExerciseShureSm58.jpg",
-        "ToolHometrainerExerciseSpanningsmeterFluke.jpg",
-        "ToolHometrainerExerciseSpeakerEvent3000.jpg",
-        "ToolHometrainerExerciseSpeakonVrouwSpeakonVrouw.jpg",
-        "ToolHometrainerExerciseSpeakonVrouwtjeConnector.jpg",
-        "ToolHometrainerExerciseSpringV2.jpg",
-        "ToolHometrainerExerciseStandenplot.jpg",
-        "ToolHometrainerExerciseStekkerdoos.jpg",
-        "ToolHometrainerExerciseTbar.jpg",
-        "ToolHometrainerExerciseTrussHaarspeld.jpg",
-        "ToolHometrainerExerciseTruss.jpg",
-        "ToolHometrainerExerciseTrussklem.jpg",
-        "ToolHometrainerExerciseTrussPin.jpg",
-        "ToolHometrainerExerciseTrussVerbindingsstuk.jpg",
-        "ToolHometrainerExerciseTulpMannetje.jpg",
-        "ToolHometrainerExerciseVerloopstukje.jpg",
-        "ToolHometrainerExerciseVersterkerSamsonAchterkant.jpg",
-        "ToolHometrainerExerciseVersterkerSamson.jpg",
-        "ToolHometrainerExerciseVgaVrouwVgaVrouw.jpg",
-        "ToolHometrainerExerciseVoetstatief.jpg",
-        "ToolHometrainerExerciseWijkenArnhemGenummerd.bmp",
-        "ToolHometrainerExerciseXlrMannetjeConnector.jpg",
-        "ToolHometrainerExerciseXlrVrouwtje.jpg",
-        "ToolHometrainerExerciseZekering.jpg"
-    };
-    std::for_each(files.begin(),files.end(),
-      [](const std::string& s)
-      {
-        if (!QFile::exists(s.c_str()))
-        {
-          const std::string filename = ":/resources/" + s;
-          QFile f(filename.c_str());
-          f.copy(s.c_str());
-          if (!QFile::exists(s.c_str()))
-          {
-            const std::string error = "HometrainerResources: file not found: '" + s + "\'";
-            throw std::runtime_error(error.c_str());
-          }
-        }
-        assert(QFile::exists(s.c_str()));
-      }
-    );
-  }
-  {
-    const std::vector<std::string> files
-    =
+    QDirIterator i(folder);
+    while (i.hasNext())
     {
-      GetExerciseClouds(),
-      GetExerciseTest(),
-      "ToolHometrainerExerciseClouds.txt",
-      "ToolHometrainerExerciseTest.txt",
-      "ToolHometrainerExerciseTtBasis.txt",
-      "ToolHometrainerExerciseTtGeluid.txt",
-      "ToolHometrainerExerciseTtLicht.txt",
-      "ToolHometrainerExerciseWijkenArnhem.txt"
-    };
-    std::for_each(files.begin(),files.end(),
-      [](const std::string& filename)
+      const QString resource_filename = i.next();
+      const QString filename = i.fileName();
+      if (QFile::exists(filename)) continue;
+      QFile::copy(resource_filename, filename);
+      if (!QFile::exists(filename))
       {
-        if (!(QFile::exists(filename.c_str())))
-        {
-          QFile f( (":/resources/" + filename).c_str() );
-          f.copy(filename.c_str());
-        }
-        if (!QFile::exists(filename.c_str()))
-        {
-          std::cerr << "File not found: " << filename << '\n';
-        }
-        assert(QFile::exists(filename.c_str()));
+        throw std::runtime_error(
+          "HometrainerResources: cannot create file '" + filename.toStdString() + "'"
+        );
       }
-    );
-  }
-{
-  const std::vector<std::string> files
-  =
-  {
-    "ToolHometrainerManual.odt"
-  };
-  std::for_each(files.begin(),files.end(),
-    [](const std::string& filename)
-    {
-      if (!(QFile::exists(filename.c_str())))
-      {
-        QFile f( (":/docs/" + filename).c_str() );
-        f.copy(filename.c_str());
-      }
-      if (!QFile::exists(filename.c_str()))
-      {
-        std::cerr << "File not found: " << filename << '\n';
-      }
-      assert(QFile::exists(filename.c_str()));
+      //A file copied from a resource is read-only
+      QFile::setPermissions(filename, QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup | QFile::ReadOther);
     }
-  );
-}
+  }
 }
 
+std::vector<std::string> ribi::HometrainerResources::GetExercises() const noexcept
+{
+  return {
+    "ToolHometrainerExerciseClouds.txt",
+    "ToolHometrainerExerciseMultiplication.txt",
+    "ToolHometrainerExerciseTest.txt",
+    "ToolHometrainerExerciseTtBasis.txt",
+    "ToolHometrainerExerciseTtGeluid.txt",
+    "ToolHometrainerExerciseTtLicht.txt",
+    "ToolHometrainerExerciseWijkenArnhem.txt"
+  };
+}
+
+void ribi::TestHometrainerResources() noexcept
+{
+  const HometrainerResources r;
+  for (const auto& filename: r.GetExercises())
+  {
+    assert(IsRegularFile(filename));
+    assert(!CreateQuestions(filename).empty());
+  }
+  assert(IsRegularFile(r.GetQuestion()));
+  assert(IsRegularFile(r.GetQuestionMark()));
+  assert(IsRegularFile(r.GetWelcome()));
+}

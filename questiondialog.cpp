@@ -1,23 +1,14 @@
-
-
-
 #include "questiondialog.h"
 
 #include <cassert>
 #include <iostream>
 #include <stdexcept>
 
-#include "openquestion.h"
-#include "multiplechoicequestion.h"
 #include "question.h"
 
-
-
-
 ribi::QuestionDialog::QuestionDialog()
-  : m_is_correct(Tribool::Indeterminate)
+  : m_is_correct{}
 {
-  assert(m_is_correct == Tribool::Indeterminate && "Answer is indeterminate at construction");
   assert(!HasSubmitted());
 }
 
@@ -33,21 +24,13 @@ std::string ribi::QuestionDialog::AskUserForInput() const noexcept
   return t;
 }
 
-//std::vector<std::string> ribi::QuestionDialog::GetCorrectAnswers() const noexcept
-//{
-// return this->GetQuestion()->GetAnswers();
-//}
-
-void ribi::QuestionDialog::Execute()
+void ribi::QuestionDialog::Execute(const bool show_feedback)
 {
   assert(!this->HasSubmitted());
 
   while (!this->HasSubmitted())
   {
-    assert(this->GetQuestion());
-    std::cout
-      << (*this->GetQuestion()) << '\n';
-
+    std::cout << GetQuestion() << '\n';
     std::cout << "Please enter your answer: " << std::endl;
 
     try
@@ -55,9 +38,9 @@ void ribi::QuestionDialog::Execute()
       const std::string s = AskUserForInput();
       if (s.empty())
       {
+        //An empty answer means the user wants to quit
         return;
       }
-
       this->Submit(s);
       assert(this->HasSubmitted());
     }
@@ -71,6 +54,7 @@ void ribi::QuestionDialog::Execute()
   }
 
   std::cout << std::endl;
+  if (!show_feedback) return;
 
   if (this->IsAnswerCorrect())
   {
@@ -78,7 +62,7 @@ void ribi::QuestionDialog::Execute()
   }
   else
   {
-    const std::vector<std::string> correct_answers { this->GetQuestion()->GetCorrectAnswers() };
+    const std::vector<std::string>& correct_answers = GetQuestion().GetCorrectAnswers();
     std::cout
       << "Incorrect, "
       << (correct_answers.size() == 1 ? "the correct answer is: " : "the correct answers are: ")
@@ -91,38 +75,22 @@ void ribi::QuestionDialog::Execute()
   std::cout << std::endl;
 }
 
-std::string ribi::QuestionDialog::GetVersion() noexcept
-{
-  return "1.3";
-}
-
-std::vector<std::string> ribi::QuestionDialog::GetVersionHistory() noexcept
-{
-  return {
-    "2011-06-29: version 1.0: initial version",
-    "2013-09-26: version 1.1: improved const-correctness, added noexcept",
-    "2013-10-24: version 1.2: added Execute for console application",
-    "2013-10-25: version 1.3: added testing to derived classes"
-  };
-}
-
 bool ribi::QuestionDialog::IsAnswerCorrect() const
 {
   if (!HasSubmitted())
   {
-    throw std::logic_error("Cannot only check if answer is correct, after submitting an answer");
+    throw std::logic_error("Can only check if answer is correct, after submitting an answer");
   }
-  assert(HasSubmitted());
-  return m_is_correct == Tribool::True;
+  return *m_is_correct;
 }
 
 void ribi::QuestionDialog::SetIsCorrect(const bool is_correct)
 {
-  assert(!HasSubmitted() && "Can only answer exactly once");
-  m_is_correct = is_correct ? Tribool::True : Tribool::False;
-
+  if (HasSubmitted())
+  {
+    throw std::logic_error("Cannot submit a second answer");
+  }
+  m_is_correct = is_correct;
   assert(HasSubmitted());
   assert(IsAnswerCorrect() == is_correct);
 }
-
-

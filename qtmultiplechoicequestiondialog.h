@@ -1,12 +1,12 @@
 #ifndef QTMULTIPLECHOICEQUESTIONDIALOG_H
 #define QTMULTIPLECHOICEQUESTIONDIALOG_H
 
-#include "qthideandshowdialog.h"
+#include <vector>
 
-#include "questiondialog.h"
+#include "multiplechoicequestiondialog.h"
 #include "qtquestiondialog.h"
 
-
+class QRadioButton;
 
 namespace Ui {
   class QtMultipleChoiceQuestionDialog;
@@ -14,50 +14,41 @@ namespace Ui {
 
 namespace ribi {
 
-struct Question;
-struct MultipleChoiceQuestion;
-struct MultipleChoiceQuestionDialog;
-
+///Qt dialog for a MultipleChoiceQuestion
 class QtMultipleChoiceQuestionDialog : public QtQuestionDialog
 {
   Q_OBJECT
 
 public:
   explicit QtMultipleChoiceQuestionDialog(
-    QWidget *parent = 0);
-
-  QtMultipleChoiceQuestionDialog(
-    const boost::shared_ptr<MultipleChoiceQuestionDialog>& dialog,
-    QWidget *parent = 0);
+    const MultipleChoiceQuestion& question,
+    QWidget *parent = nullptr
+  );
   QtMultipleChoiceQuestionDialog(const QtMultipleChoiceQuestionDialog&) = delete;
   QtMultipleChoiceQuestionDialog& operator=(const QtMultipleChoiceQuestionDialog&) = delete;
-
   ~QtMultipleChoiceQuestionDialog() noexcept;
 
-  boost::shared_ptr<const QuestionDialog> GetDialog() const;
+  const QuestionDialog& GetDialog() const noexcept override { return m_dialog; }
 
-  ///Obtain the version of this class
-  static std::string GetVersion() noexcept;
+  ///Select an option, as if the user clicked on it
+  void SelectOption(const int index);
 
-  ///Obtain the version history of this class
-  static std::vector<std::string> GetVersionHistory() noexcept;
-
-  void SetDialog(const boost::shared_ptr<QuestionDialog>& dialog);
+  ///Submit the answer, as if the user clicked the submit button
+  void Submit();
 
 private slots:
   void on_button_submit_clicked() noexcept;
 
 private:
   Ui::QtMultipleChoiceQuestionDialog *ui;
-  boost::shared_ptr<MultipleChoiceQuestionDialog> m_dialog;
 
-  ///Set the Question
-  //void SetQuestion(const boost::shared_ptr<const MultipleChoiceQuestion>& question) noexcept;
+  ///One radio button per option
+  std::vector<QRadioButton*> m_buttons;
 
-  void OnMultipleChoiceQuestionDialogChanged(MultipleChoiceQuestionDialog * const mc_question_dialog) noexcept;
-  void OnMultipleChoiceQuestionChanged(const boost::shared_ptr<MultipleChoiceQuestionDialog>& mc_question) noexcept;
-
+  MultipleChoiceQuestionDialog m_dialog;
 };
+
+void TestQtMultipleChoiceQuestionDialog() noexcept;
 
 } //~namespace ribi
 

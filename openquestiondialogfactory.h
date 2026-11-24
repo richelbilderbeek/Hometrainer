@@ -1,10 +1,6 @@
 #ifndef OPENQUESTIONDIALOGFACTORY_H
 #define OPENQUESTIONDIALOGFACTORY_H
 
-
-
-
-
 #include <string>
 #include <vector>
 

@@ -11,7 +11,9 @@ namespace ribi {
 ///Class for a multiple choice question
 struct MultipleChoiceQuestion : public Question
 {
-  ///Throws nothing or std::out_of_range or std::runtime_error
+  ///Create a multiple choice question from a line of a Hometrainer file,
+  ///for example '-,1+1=,2,1,3'
+  ///Throws std::logic_error if this is not a multiple choice question
   explicit MultipleChoiceQuestion(const std::string& question);
 
   explicit MultipleChoiceQuestion(
@@ -21,8 +23,8 @@ struct MultipleChoiceQuestion : public Question
     const std::vector<std::string>& wrong_answers
   );
 
-  ///Create a copy of the Question, depending on the derived class its type
-  Question * Clone() const noexcept;
+  ///Create a copy of the Question
+  std::unique_ptr<Question> Clone() const override;
 
   ///Obtain the only correct answer
   const std::string& GetAnswer() const noexcept;
@@ -32,7 +34,6 @@ struct MultipleChoiceQuestion : public Question
 
   ///Obtain the possible options to be chosen in a random order
   const std::vector<std::string>& GetOptions() const noexcept;
-
 
   ///Obtain the version
   static std::string GetVersion() noexcept;
@@ -44,19 +45,19 @@ struct MultipleChoiceQuestion : public Question
   const std::vector<std::string>& GetWrongAnswers() const noexcept { return m_wrong_answers; }
 
   ///How to display the question as multiple lines
-  std::vector<std::string> ToLines() const noexcept;
+  std::vector<std::string> ToLines() const noexcept override;
 
   ///Convert to std::string line
-  std::string ToStr() const noexcept;
+  std::string ToStr() const noexcept override;
 
   private:
 
   ///All the wrong answers
-  const std::vector<std::string> m_wrong_answers;
+  std::vector<std::string> m_wrong_answers;
 
   ///All the options the user can choose from, which equals
   ///all wrong answers and the correct answer, shuffled randomly
-  const std::vector<std::string> m_options;
+  std::vector<std::string> m_options;
 };
 
 ///Create the possible options to be chosen in a random order
@@ -64,18 +65,15 @@ std::vector<std::string> CreateMcqOptions(
   const std::vector<std::string>& wrong_answers,
   const std::string& answer) noexcept;
 
-///The options (correct + wrong answers) are at indices 2 to SeperateString(input,',').size()
-std::vector<std::string> ExtractMcqOptions(
-  const std::string& input);
-
-///The wrong answers are at indices 3 to SeperateString(input,',').size()
+///The wrong answers are at indices 3 to SeperateHometrainerLine(input).size()
+///Throws std::logic_error if there are no wrong answers
 std::vector<std::string> ExtractMcqWrongAnswers(
   const std::string& input);
 
-///Obtain valid multiple choice question
+///Obtain invalid multiple choice questions
 std::vector<std::string> GetInvalidMultipleChoiceQuestions() noexcept;
 
-///Obtain valid multiple choice question
+///Obtain valid multiple choice questions
 std::vector<std::string> GetValidMultipleChoiceQuestions() noexcept;
 
 void TestMultipleChoiceQuestion() noexcept;

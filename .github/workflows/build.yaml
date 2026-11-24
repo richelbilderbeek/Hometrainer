@@ -1,0 +1,111 @@
+# Build and test the Linux and Windows versions of Hometrainer
+#
+# The Windows version is uploaded as an artifact of this workflow.
+# This workflow is also called by create_zensical_website.yaml,
+# which puts the Windows version on the website.
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_call:
+
+env:
+  QT_VERSION: 6.8.3
+
+jobs:
+  build_linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          cache: true
+
+      - name: Build and run the tests
+        run: |
+          mkdir build_test
+          cd build_test
+          qmake CONFIG+=debug ../ToolHometrainerTest.pro
+          make --silent
+          QT_QPA_PLATFORM=offscreen ./ToolHometrainerTest
+
+      - name: Build the console version
+        run: |
+          mkdir build_console
+          cd build_console
+          qmake ../ToolHometrainerConsole.pro
+          make --silent
+          ./ToolHometrainerConsole --version
+
+      - name: Build the desktop version
+        run: |
+          mkdir build_desktop
+          cd build_desktop
+          qmake ../ToolHometrainerDesktop.pro
+          make --silent
+
+      - name: The desktop version must start and keep running
+        run: |
+          status=0
+          QT_QPA_PLATFORM=offscreen timeout 5 ./build_desktop/ToolHometrainerDesktop || status=$?
+          test "${status}" -eq 124
+
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          arch: win64_msvc2022_64
+          cache: true
+
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Build the desktop version
+        run: |
+          mkdir build_desktop
+          cd build_desktop
+          qmake ../ToolHometrainerDesktop.pro
+          nmake /nologo
+
+      - name: Build the console version
+        run: |
+          mkdir build_console
+          cd build_console
+          qmake ../ToolHometrainerConsole.pro
+          nmake /nologo
+
+      - name: Collect the files needed to run Hometrainer
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory hometrainer_windows
+          Copy-Item build_desktop/release/ToolHometrainerDesktop.exe hometrainer_windows/
+          Copy-Item build_console/release/ToolHometrainerConsole.exe hometrainer_windows/
+          windeployqt --release --no-translations --no-system-d3d-compiler --no-opengl-sw hometrainer_windows/ToolHometrainerDesktop.exe
+          windeployqt --release --no-translations --no-system-d3d-compiler --no-opengl-sw hometrainer_windows/ToolHometrainerConsole.exe
+          Get-ChildItem "$env:VCToolsRedistDir/x64/Microsoft.VC*.CRT/*.dll" | Copy-Item -Destination hometrainer_windows/
+          Copy-Item LICENSE hometrainer_windows/LICENSE.txt
+
+      - name: Hometrainer must start and keep running without Qt being installed
+        shell: pwsh
+        run: |
+          $env:PATH = "C:\Windows\System32;C:\Windows"
+          Remove-Item Env:QT_PLUGIN_PATH, Env:QML2_IMPORT_PATH -ErrorAction Ignore
+          hometrainer_windows/ToolHometrainerConsole.exe --version
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          $app = Start-Process -PassThru -FilePath hometrainer_windows/ToolHometrainerDesktop.exe
+          Start-Sleep -Seconds 5
+          if ($app.HasExited) { exit 1 }
+          Stop-Process -Id $app.Id
+          Get-ChildItem hometrainer_windows -Name
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hometrainer_windows
+          path: hometrainer_windows
+          if-no-files-found: error

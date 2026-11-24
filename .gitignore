@@ -28,3 +28,23 @@
 *.app
 *.pro.user
 *.pro.user.*
+.qmake.stash
+Makefile
+Makefile.*
+moc_*
+qrc_*
+ui_*.h
+*_plugin_import.cpp
+/ToolHometrainerConsole
+/ToolHometrainerDesktop
+/ToolHometrainerTest
+/build*/
+debug/
+release/
+*.gcno
+*.gcda
+
+# Generated when building the website
+/docs/hometrainer_windows.zip
+/site/
+wordlist.dic

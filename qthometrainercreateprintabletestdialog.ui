@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QtHometrainerCreatePrintableTestDialog</class>
+ <widget class="QDialog" name="QtHometrainerCreatePrintableTestDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>900</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Hometrainer: create test on paper</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="ToolHometrainer.qrc">
+    <normaloff>:/resources/ToolHometrainerQuestionmark.png</normaloff>:/resources/ToolHometrainerQuestionmark.png</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="layout_main">
+   <item>
+    <widget class="QLabel" name="label_explanation">
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>Load an exercise (or type one) to create a test that can be printed. With an answer code, the letters of the correct answers of the multiple choice questions spell the code, which makes grading easier.</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="button_load">
+     <property name="text">
+      <string>Load exercise</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="layout_texts">
+     <item>
+      <layout class="QVBoxLayout" name="layout_exercise">
+       <item>
+        <widget class="QLabel" name="label_exercise">
+         <property name="text">
+          <string>Exercise</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPlainTextEdit" name="edit_exercise">
+         <property name="readOnly">
+          <bool>false</bool>
+         </property>
+         <property name="placeholderText">
+          <string>Hometrainer (C) 2009 Richel Bilderbeek</string>
+         </property>
+         <property name="lineWrapMode">
+          <enum>QPlainTextEdit::NoWrap</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="layout_printable">
+       <item>
+        <widget class="QLabel" name="label_printable">
+         <property name="text">
+          <string>Test on paper</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPlainTextEdit" name="edit_printable">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+         <property name="placeholderText">
+          <string>The test will be shown here</string>
+         </property>
+         <property name="lineWrapMode">
+          <enum>QPlainTextEdit::NoWrap</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QFormLayout" name="layout_settings">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_n_questions">
+       <property name="text">
+        <string>Maximum number of questions</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSpinBox" name="box_n_questions">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>100000</number>
+       </property>
+       <property name="value">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="box_use_code">
+       <property name="text">
+        <string>Use answer code</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="edit_code">
+       <property name="text">
+        <string>HOMETRAINER</string>
+       </property>
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_format">
+       <property name="text">
+        <string>Format</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QComboBox" name="box_format">
+       <item>
+        <property name="text">
+         <string>HTML (can be opened by a web browser or word processor)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Plain text</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="layout_buttons">
+     <item>
+      <widget class="QPushButton" name="button_create">
+       <property name="text">
+        <string>Create test on paper</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_save">
+       <property name="text">
+        <string>Save test on paper</string>
+       </property>
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="ToolHometrainer.qrc"/>
+ </resources>
+ <connections/>
+</ui>

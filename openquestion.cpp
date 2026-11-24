@@ -2,13 +2,9 @@
 
 #include <cassert>
 #include <string>
-#include <fstream>
 #include <stdexcept>
 
-#include <boost/algorithm/string/split.hpp>
-#include <boost/scoped_ptr.hpp>
-
-#include "imagecanvas.h"
+#include "hometrainerhelper.h"
 #include "openquestionfactory.h"
 
 ribi::OpenQuestion::OpenQuestion(
@@ -17,25 +13,27 @@ ribi::OpenQuestion::OpenQuestion(
   const std::vector<std::string>& answers)
   : Question(filename,question, answers )
 {
-  //assert(!filename.empty() && "Filename must not be empty");
-  //assert(FileExists(filename) == true && "File must exists");
-  //assert(!question.empty() && "OpenQuestion must not be empty");
-  //assert(!correct_answers.empty() && "Correct answer must not be empty");
+
 }
 
-ribi::Question * ribi::OpenQuestion::Clone() const noexcept
+std::unique_ptr<ribi::Question> ribi::OpenQuestion::Clone() const
 {
-  return new OpenQuestion(
+  return std::make_unique<OpenQuestion>(
     this->GetFilename(),
     this->GetQuestion(),
     this->GetCorrectAnswers()
   );
 }
 
-//const std::vector<std::string>& ribi::OpenQuestion::GetAnswers() const noexcept
-//{
-//  this->GetCorrectAnswers()
-//}
+bool ribi::operator==(const OpenQuestion& lhs, const OpenQuestion& rhs) noexcept
+{
+  return lhs.ToStr() == rhs.ToStr();
+}
+
+bool ribi::operator!=(const OpenQuestion& lhs, const OpenQuestion& rhs) noexcept
+{
+  return !(lhs == rhs);
+}
 
 void ribi::TestOpenQuestion() noexcept
 {
@@ -46,13 +44,13 @@ void ribi::TestOpenQuestion() noexcept
     const std::string answer_1 = "2";
     const std::vector<std::string> answers { answer_1 };
     const auto q = OpenQuestionFactory().Create(filename,question,answers);
-    assert(q->GetFilename() == filename);
-    assert(q->GetQuestion() == question);
-    assert(q->GetCorrectAnswers() == answers);
-    assert(q->IsCorrect(answer_1));
-    assert(!q->IsCorrect("3"));
-    assert(!q->IsCorrect(filename));
-    assert(!q->IsCorrect(question));
+    assert(q.GetFilename() == filename);
+    assert(q.GetQuestion() == question);
+    assert(q.GetCorrectAnswers() == answers);
+    assert(q.IsCorrect(answer_1));
+    assert(!q.IsCorrect("3"));
+    assert(!q.IsCorrect(filename));
+    assert(!q.IsCorrect(question));
   }
   //Test simple get/set with two answers
   {
@@ -62,14 +60,14 @@ void ribi::TestOpenQuestion() noexcept
     const std::string answer_2 { "Two" };
     const std::vector<std::string> answers { answer_1, answer_2 };
     const auto q = OpenQuestionFactory().Create(filename,question,answers);
-    assert(q->GetFilename() == filename);
-    assert(q->GetQuestion() == question);
-    assert(q->GetCorrectAnswers() == answers);
-    assert(q->IsCorrect(answer_1));
-    assert(q->IsCorrect(answer_2));
-    assert(!q->IsCorrect( answer_1 + "/" + answer_2));
-    assert(!q->IsCorrect(filename));
-    assert(!q->IsCorrect(question));
+    assert(q.GetFilename() == filename);
+    assert(q.GetQuestion() == question);
+    assert(q.GetCorrectAnswers() == answers);
+    assert(q.IsCorrect(answer_1));
+    assert(q.IsCorrect(answer_2));
+    assert(!q.IsCorrect( answer_1 + "/" + answer_2));
+    assert(!q.IsCorrect(filename));
+    assert(!q.IsCorrect(question));
   }
   //Test conversion std::string to OpenQuestion and back
   {
@@ -77,7 +75,7 @@ void ribi::TestOpenQuestion() noexcept
     for (const std::string& s: valid)
     {
       const auto q = OpenQuestionFactory().Create(s);
-      assert(s == q->ToStr());
+      assert(s == q.ToStr());
     }
   }
   //Test that ToLines always yields the same result
@@ -86,40 +84,27 @@ void ribi::TestOpenQuestion() noexcept
     for (const std::string& s: valid)
     {
       const auto q = OpenQuestionFactory().Create(s);
-      const auto v = q->ToLines();
-      const auto w = q->ToLines();
+      const auto v = q.ToLines();
+      const auto w = q.ToLines();
       assert(v == w);
     }
+  }
+  //Clone
+  {
+    const auto q = OpenQuestionFactory().Create("-,1+1=,2/two");
+    const auto r = q.Clone();
+    assert(r->ToStr() == q.ToStr());
   }
 }
 
 std::vector<std::string> ribi::OpenQuestion::ToLines() const noexcept
 {
-  std::vector<std::string> v;
-
   const int screen_rows { 23 };
   const int question_rows { 1 };
-  const int n_rows { screen_rows - question_rows };
-  if (!GetFilename().empty())
+  std::vector<std::string> v;
+  if (HasImage())
   {
-    int n_cols = 78;
-
-    while (1)
-    {
-      const boost::shared_ptr<ImageCanvas> canvas {
-        new ImageCanvas(GetFilename(),n_cols)
-      };
-      if (canvas->GetHeight() > n_rows)
-      {
-        --n_cols;
-      }
-      else
-      {
-        v = canvas->ToStrings();
-        break;
-      }
-      if (n_cols == 5) break;
-    }
+    v = ImageToAsciiArt(GetFilename(), 78, screen_rows - question_rows);
   }
   v.push_back(this->GetQuestion()); //The one question_row
   return v;
@@ -131,13 +116,13 @@ std::string ribi::OpenQuestion::ToStr() const noexcept
   assert(!GetCorrectAnswers().empty());
   std::string correct_answers_str;
 
-  for (const std::string s: this->GetCorrectAnswers()) { correct_answers_str += s + "/"; }
+  for (const std::string& s: this->GetCorrectAnswers()) { correct_answers_str += s + "/"; }
   assert(!correct_answers_str.empty());
-  correct_answers_str.resize(correct_answers_str.size() - 1);
+  correct_answers_str.pop_back();
 
   std::string s
-    = this->GetFilename()
-    + "," + this->GetQuestion()
-    + "," + correct_answers_str;
+    = EscapeHometrainerField(this->GetFilename())
+    + "," + EscapeHometrainerField(this->GetQuestion())
+    + "," + EscapeHometrainerField(correct_answers_str);
   return s;
 }

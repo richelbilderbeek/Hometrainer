@@ -6,39 +6,31 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>728</width>
-    <height>807</height>
+    <width>560</width>
+    <height>760</height>
    </rect>
-  </property>
-  <property name="font">
-   <font>
-    <pointsize>20</pointsize>
-   </font>
   </property>
   <property name="windowTitle">
    <string>Hometrainer</string>
   </property>
   <property name="windowIcon">
-   <iconset>
-    <normaloff>:/images/R.png</normaloff>:/images/R.png</iconset>
+   <iconset resource="ToolHometrainer.qrc">
+    <normaloff>:/resources/ToolHometrainerQuestionmark.png</normaloff>:/resources/ToolHometrainerQuestionmark.png</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">QDialog { 
+   <string notr="true">QDialog {
 background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1, stop: 0  #808080, stop: 1 #ffffff);
 }
-QPushButton { background-color: rgb(255, 255, 255);  }
+QPushButton { background-color: rgb(255, 255, 255); font-size: 28px; padding: 4px; }
 QPushButton:enabled { color: rgb(0,0,0); }
-QPushButton:disables { color: rgb(128,128,128); }
-QPushButton { font: 48px, &quot;monospace&quot; }</string>
+QPushButton:disabled { color: rgb(160,160,160); }
+QPushButton:hover { background-color: rgb(255, 255, 192); }</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label">
      <property name="text">
       <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="ToolHometrainer.qrc">:/images/ToolHometrainerQuestionmark.png</pixmap>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -62,6 +54,59 @@ QPushButton { font: 48px, &quot;monospace&quot; }</string>
      </property>
      <property name="text">
       <string>Start exercise</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="button_load_test">
+     <property name="text">
+      <string>Load test</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="button_start_test">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Start test</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="button_create_test">
+     <property name="text">
+      <string>Create test</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="button_score_tests">
+     <property name="text">
+      <string>Score tests</string>
+     </property>
+     <property name="flat">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="button_create_printable_test">
+     <property name="text">
+      <string>Create test on paper</string>
      </property>
      <property name="flat">
       <bool>true</bool>
@@ -103,6 +148,11 @@ QPushButton { font: 48px, &quot;monospace&quot; }</string>
  <tabstops>
   <tabstop>button_load_exercise</tabstop>
   <tabstop>button_start_exercise</tabstop>
+  <tabstop>button_load_test</tabstop>
+  <tabstop>button_start_test</tabstop>
+  <tabstop>button_create_test</tabstop>
+  <tabstop>button_score_tests</tabstop>
+  <tabstop>button_create_printable_test</tabstop>
   <tabstop>button_create_examples</tabstop>
   <tabstop>button_about</tabstop>
   <tabstop>button_quit</tabstop>

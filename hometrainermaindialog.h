@@ -1,40 +1,85 @@
 #ifndef HOMETRAINERMAINDIALOG_H
 #define HOMETRAINERMAINDIALOG_H
 
+#include <memory>
+#include <optional>
 #include <string>
 #include <vector>
 
+#include "hometrainertestresults.h"
 #include "question.h"
 #include "questiondialog.h"
-#include "multiplechoicequestiondialog.h"
-#include "openquestiondialog.h"
 
 namespace ribi {
 
+///The settings of a student doing a test
+struct HometrainerTestSession
+{
+  ///The full name of the student
+  std::string m_username;
+
+  ///The key the test is encrypted with
+  int m_key;
+
+  ///The file the results are saved to
+  std::string m_results_filename;
+};
+
 ///HometrainerMainDialog loads a collection of questions from file.
 ///From then on, it selects questions and keeps track of the score.
+///
+///In an exercise, the questions are asked in a random order, over and over,
+///and the user gets feedback on each answer.
+///
+///In a test, each question is asked once and the user gets no feedback.
+///After each answer, the encrypted results are saved to file.
+///
 ///The user comminication is done via a QuestionDialog
 struct HometrainerMainDialog
 {
-  ///Load questions from file
-  HometrainerMainDialog(const std::string& filename);
+  ///Load an exercise from file.
+  ///Throws std::runtime_error if the file does not exist
+  ///Throws std::logic_error if there are no valid questions
+  explicit HometrainerMainDialog(const std::string& filename);
 
-  HometrainerMainDialog(const std::vector<ribi::Question>& questions);
+  ///Throws std::logic_error if there are no questions
+  explicit HometrainerMainDialog(
+    const std::vector<std::shared_ptr<const Question>>& questions,
+    const std::optional<HometrainerTestSession>& test_session = std::nullopt
+  );
 
   ///Start the command-line version
   void Execute();
 
+  ///Obtain the question to be answered now
   const Question& GetCurrentQuestion() const noexcept;
 
   int GetNumberCorrect() const noexcept { return m_n_correct; }
   int GetNumberIncorrect() const noexcept { return m_n_incorrect; }
+  int GetNumberOfQuestions() const noexcept { return static_cast<int>(m_questions.size()); }
 
   ///Get the parsed questions
-  const std::vector<Question>& GetQuestions() const noexcept
-  {
-    return m_questions;
-  }
+  const std::vector<std::shared_ptr<const Question>>& GetQuestions() const noexcept { return m_questions; }
 
+  ///Obtain a text that describes the score so far
+  std::string GetScoreText() const noexcept;
+
+  ///Obtain the test session, if this is a test
+  const std::optional<HometrainerTestSession>& GetTestSession() const noexcept { return m_test_session; }
+
+  ///Is the test done? An exercise is never done
+  bool IsDone() const noexcept;
+
+  ///Is this a test (instead of an exercise)?
+  bool IsTest() const noexcept { return m_test_session.has_value(); }
+
+  ///Register that the current question is answered (in)correctly,
+  ///then go to the next question.
+  ///In a test, the results are saved to file
+  ///Throws std::logic_error if the test is done
+  void RegisterAnswer(const bool is_correct);
+
+  ///Submit an answer to the current question, then go to the next question
   void Submit(const std::string& answer_from_user);
 
   private:
@@ -47,40 +92,26 @@ struct HometrainerMainDialog
   ///Number of incorrect answers
   int m_n_incorrect;
 
-  ///The original polymorphic type
-  std::unique_ptr<QuestionDialog> m_question_dialog;
-
   ///The questions loaded
-  std::vector<Question> m_questions;
+  std::vector<std::shared_ptr<const Question>> m_questions;
 
-  ///Does the user want to quit?
-  bool m_quit;
+  ///The results of the test, if this is a test
+  std::optional<HometrainerTestResults> m_test_results;
 
-  void DisplayScore() const noexcept;
+  ///The test settings, if this is a test
+  std::optional<HometrainerTestSession> m_test_session;
 
-  ///Create a new question
+  ///Go to the next question
   void NewQuestion();
 
-  ///Respond to the user requesting to quit
-  void OnRequestQuit() noexcept;
-
-  ///Respond to the user submitting an answer
-  void OnSubmitted(const bool is_correct) noexcept;
-
+  ///Save the test results to file
+  void SaveTestResults() const;
 };
-
-///Create a Question from a std::string
-///Returns nullptr if the string cannot be converted to a question
-std::unique_ptr<Question> CreateQuestion(const std::string& s) noexcept;
-
-std::vector<Question> CreateQuestions(
-  const std::string& filename
-);
 
 ///Build the correct dialog for a (derived class of) question
 std::unique_ptr<QuestionDialog> CreateQuestionDialog(
   const Question& question
-) noexcept;
+);
 
 void TestHometrainerMainDialog() noexcept;
 

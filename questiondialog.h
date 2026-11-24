@@ -1,10 +1,9 @@
 #ifndef QUESTIONDIALOG_H
 #define QUESTIONDIALOG_H
 
+#include <optional>
+#include <string>
 #include <vector>
-#include <memory>
-
-#include "tribool.h"
 
 namespace ribi {
 
@@ -19,18 +18,21 @@ struct QuestionDialog
 
   virtual ~QuestionDialog() noexcept;
 
-  ///Run the dialog from the command line
-  void Execute();
-
-  Tribool GetIsCorrect() const noexcept { return m_is_correct; }
+  ///Run the dialog from the command line.
+  ///If 'show_feedback' is false, the user is not told if the
+  ///answer is correct, which is used in a test.
+  ///If the user enters an empty line, no answer is submitted,
+  ///which means that the user wants to quit
+  void Execute(const bool show_feedback = true);
 
   ///Obtain the question
-  virtual const Question& GetQuestion() const = 0;
+  virtual const Question& GetQuestion() const noexcept = 0;
 
   ///Check if an answer has been submitted
-  bool HasSubmitted() const { return m_is_correct != Tribool::Indeterminate; }
+  bool HasSubmitted() const noexcept { return m_is_correct.has_value(); }
 
-  ///See if the submitted answer is correct
+  ///See if the submitted answer is correct.
+  ///Throws std::logic_error if no answer has been submitted yet
   bool IsAnswerCorrect() const;
 
   ///Try to submit an answer
@@ -42,22 +44,19 @@ struct QuestionDialog
 
   virtual std::string ToStr() const noexcept = 0;
 
+  protected:
   ///Set whether the user has answered the client correct
   void SetIsCorrect(const bool is_correct);
 
   private:
 
   ///Was the submitted answer correct?
-  ///Emulates a bool*:
-  ///m_is_correct.empty() -> nullptr -> indeterminate
-  ///m_is_correct[0] == 0 -> false
-  ///m_is_correct[0] == 1 -> true
-  ///Other values and sizes are invalid
-  Tribool m_is_correct;
+  ///Is empty if no answer has been submitted yet
+  std::optional<bool> m_is_correct;
 
   std::string AskUserForInput() const noexcept;
 };
 
 } //~namespace ribi
 
-#endif // OPENQUESTIONDIALOG_H
+#endif // QUESTIONDIALOG_H

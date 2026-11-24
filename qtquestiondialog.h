@@ -1,7 +1,9 @@
 #ifndef QTQUESTIONDIALOG_H
 #define QTQUESTIONDIALOG_H
 
-#include "qthideandshowdialog.h"
+#include <QDialog>
+
+class QLabel;
 
 namespace ribi {
 
@@ -9,20 +11,46 @@ struct Question;
 struct QuestionDialog;
 
 ///Qt dialog for QuestionDialog
-struct QtQuestionDialog : public QtHideAndShowDialog
+class QtQuestionDialog : public QDialog
 {
-  explicit QtQuestionDialog(QWidget *parent = 0);
+  Q_OBJECT
+
+public:
+  explicit QtQuestionDialog(QWidget *parent = nullptr);
   virtual ~QtQuestionDialog() noexcept {}
 
-  virtual boost::shared_ptr<const QuestionDialog> GetDialog() const = 0;
-  virtual void SetDialog(const boost::shared_ptr<QuestionDialog>& dialog) = 0;
+  virtual const QuestionDialog& GetDialog() const noexcept = 0;
 
-  private:
-  #ifndef NDEBUG
-  static void Test() noexcept;
-  #endif
+  ///Will the user be shown if the answer is correct?
+  ///This is not done in a test
+  bool GetShowFeedback() const noexcept { return m_show_feedback; }
+
+  ///Set if the user will be shown if the answer is correct.
+  ///This is not done in a test
+  void SetShowFeedback(const bool show_feedback) noexcept { m_show_feedback = show_feedback; }
+
+signals:
+  ///Emitted when the user has submitted an answer
+  void signal_submitted(const bool is_correct);
+
+protected:
+  ///Display the image of a question in a QLabel.
+  ///If the image cannot be found, a message is displayed instead.
+  ///Clicking the QLabel shows the image full size
+  void DisplayImage(QLabel * const label, const Question& question);
+
+  bool eventFilter(QObject * object, QEvent * event) override;
+
+private:
+  ///The filename of the image displayed
+  QString m_image_filename;
+
+  bool m_show_feedback;
 };
+
+///Show an image full size, in a scrollable dialog
+void ShowImageFullSize(const QString& filename, QWidget * const parent = nullptr);
 
 } //~namespace ribi
 
-#endif // CPPQTQUESTIONDIALOG_H
+#endif // QTQUESTIONDIALOG_H

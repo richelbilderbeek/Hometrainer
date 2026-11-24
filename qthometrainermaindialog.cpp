@@ -1,39 +1,38 @@
 #include "qthometrainermaindialog.h"
 
-#include "multiplechoicequestion.h"
-#include "multiplechoicequestiondialog.h"
-#include "openquestion.h"
-#include "openquestionfactory.h"
-#include "openquestiondialog.h"
-#include "openquestiondialogfactory.h"
-#include "qtmultiplechoicequestiondialog.h"
-#include "hometrainermaindialog.h"
-#include "qtopenquestiondialog.h"
-#include "questiondialog.h"
-
-
-#include "ui_qthometrainermaindialog.h"
-
 #include <cassert>
+#include <cstdio>
 #include <stdexcept>
-#include <sstream>
 
 #include <QKeyEvent>
+#include <QMessageBox>
 #include <QTimer>
+#include <QVBoxLayout>
 
+#include "hometrainerhelper.h"
+#include "hometrainermaindialog.h"
+#include "multiplechoicequestion.h"
+#include "openquestion.h"
+#include "openquestionfactory.h"
+#include "qtmultiplechoicequestiondialog.h"
+#include "qtopenquestiondialog.h"
+#include "ui_qthometrainermaindialog.h"
 
 ribi::QtHometrainerMainDialog::QtHometrainerMainDialog(
-  const boost::shared_ptr<const HometrainerMainDialog> dialog,
-  QWidget *parent) noexcept
-  : QtHideAndShowDialog(parent),
+  const std::shared_ptr<HometrainerMainDialog>& dialog,
+  QWidget *parent)
+  : QDialog(parent),
     ui(new Ui::QtHometrainerMainDialog),
     m_dialog{dialog},
-    m_qtdialog{}
-    //m_questions{dialog->GetQuestions()}
+    m_qtdialog{nullptr},
+    m_timer{new QTimer(this)}
 {
   ui->setupUi(this);
-
   assert(m_dialog);
+  setWindowTitle(m_dialog->IsTest() ? "Hometrainer test" : "Hometrainer exercise");
+  m_timer->setSingleShot(true);
+  QObject::connect(m_timer, &QTimer::timeout, this, &QtHometrainerMainDialog::NewQuestion);
+  ui->button_next->setVisible(false);
   SetQuestion(m_dialog->GetCurrentQuestion());
 }
 
@@ -42,131 +41,145 @@ ribi::QtHometrainerMainDialog::~QtHometrainerMainDialog() noexcept
   delete ui;
 }
 
-boost::shared_ptr<ribi::QtQuestionDialog> ribi::QtHometrainerMainDialog::CreateQtQuestionDialog(
-  const boost::shared_ptr<const Question> s)
+ribi::QtQuestionDialog * ribi::CreateQtQuestionDialog(const Question& question)
 {
-  boost::shared_ptr<QtQuestionDialog> p;
-
-  try
+  if (const auto q = dynamic_cast<const OpenQuestion*>(&question))
   {
-    //const boost::shared_ptr<const OpenQuestion> q {
-    //  boost::dynamic_pointer_cast<const OpenQuestion>(s)
-    //};
-    //if (!q) throw std::runtime_error("q cannot be converted to OpenQuestion");
-    //assert(q);
-    //const boost::shared_ptr<OpenQuestionDialog> d(new OpenQuestionDialog(q));
-    const auto d = OpenQuestionDialogFactory().Create(s->ToStr());
-    const auto qd = boost::make_shared<QtOpenQuestionDialog>();
-    qd->SetDialog(d);
-    assert(qd);
-    if (qd) p = qd;
-    //assert(d);
-    //if (d) p.reset(new QtOpenQuestionDialog(d));
-    assert(p);
-    return p;
+    return new QtOpenQuestionDialog(*q);
   }
-  catch(std::exception&)
+  if (const auto q = dynamic_cast<const MultipleChoiceQuestion*>(&question))
   {
-    //No problem
+    return new QtMultipleChoiceQuestionDialog(*q);
   }
-  try
-  {
-    const boost::shared_ptr<const MultipleChoiceQuestion> q {
-      boost::dynamic_pointer_cast<const MultipleChoiceQuestion>(s)
-    };
-    assert(q);
-    const boost::shared_ptr<MultipleChoiceQuestionDialog> d(new MultipleChoiceQuestionDialog(q));
-    if (d) p.reset(new QtMultipleChoiceQuestionDialog(d));
-    assert(p);
-    return p;
-  }
-  catch(std::exception&)
-  {
-    //No problem
-  }
-  //Possible other question types
-
-  //No question type could parse the question:
-  //now there is a problem
-  throw std::logic_error(
-    "QtHometrainerMainDialog::CreateQtQuestionDialog: "
-    "cannot create QtQuestionDialog");
+  throw std::logic_error("CreateQtQuestionDialog: unknown question type");
 }
 
 void ribi::QtHometrainerMainDialog::DisplayScore()
 {
-  std::stringstream s;
-  s << "Correct: "
-    << m_dialog->GetNumberCorrect()
-    << ", incorrect: "
-    << m_dialog->GetNumberIncorrect();
-  ui->label_score->setText(s.str().c_str());
+  ui->label_score->setText(m_dialog->GetScoreText().c_str());
 }
-
 
 void ribi::QtHometrainerMainDialog::keyPressEvent(QKeyEvent* event)
 {
   if (event->key() == Qt::Key_Escape) { close(); return; }
+  QDialog::keyPressEvent(event);
 }
 
 void ribi::QtHometrainerMainDialog::NewQuestion()
 {
+  m_timer->stop();
+  ui->button_next->setVisible(false);
   SetQuestion(m_dialog->GetCurrentQuestion());
+}
+
+void ribi::QtHometrainerMainDialog::on_button_next_clicked()
+{
+  NewQuestion();
+}
+
+void ribi::QtHometrainerMainDialog::on_button_quit_clicked()
+{
+  close();
 }
 
 void ribi::QtHometrainerMainDialog::OnSubmitted(const bool is_correct)
 {
+  m_dialog->RegisterAnswer(is_correct);
   DisplayScore();
-
-  QTimer::singleShot(
-    is_correct ? 1000 : 5000,
-    this,SLOT(NewQuestion())
-  );
-
+  if (m_dialog->IsTest())
+  {
+    if (m_dialog->IsDone())
+    {
+      if (isVisible())
+      {
+        QMessageBox::information(this, "Hometrainer",
+          QString("Test done. Your results are saved to '")
+          + m_dialog->GetTestSession()->m_results_filename.c_str() + "'"
+        );
+      }
+      close();
+      return;
+    }
+    //Go to the next question directly, after the signal is handled
+    m_timer->start(0);
+    return;
+  }
+  //Show the feedback for a while
+  ui->button_next->setVisible(true);
+  m_timer->start(is_correct ? 1000 : 5000);
 }
 
-void ribi::QtHometrainerMainDialog::SetQuestion(const boost::shared_ptr<const Question> s)
+void ribi::QtHometrainerMainDialog::SetQuestion(const Question& question)
 {
-  assert(s);
-  const auto new_qtdialog = CreateQtQuestionDialog(s);
-  assert(new_qtdialog);
-  if (ui->contents_here->layout())
-  {
-    delete ui->contents_here->layout();
-  }
-  assert(!ui->contents_here->layout());
-
-  m_qtdialog = new_qtdialog;
   if (m_qtdialog)
   {
-    assert(!ui->contents_here->layout());
-    QLayout * const my_layout = new QVBoxLayout;
-    ui->contents_here->setLayout(my_layout);
-    assert(ui->contents_here->layout());
-    my_layout->addWidget(m_qtdialog.get());
+    ui->layout_contents->removeWidget(m_qtdialog);
+    m_qtdialog->deleteLater();
+    m_qtdialog = nullptr;
   }
+  m_qtdialog = CreateQtQuestionDialog(question);
+  m_qtdialog->setParent(ui->contents_here);
+  m_qtdialog->setWindowFlags(Qt::Widget);
+  m_qtdialog->setFont(font());
+  m_qtdialog->SetShowFeedback(!m_dialog->IsTest());
+  QObject::connect(m_qtdialog, &QtQuestionDialog::signal_submitted,
+    this, &QtHometrainerMainDialog::OnSubmitted);
+  ui->layout_contents->addWidget(m_qtdialog);
+  m_qtdialog->show();
+  m_qtdialog->setFocus();
   DisplayScore();
 }
 
 void ribi::TestQtHometrainerMainDialog() noexcept
 {
-  std::vector<boost::shared_ptr<const Question> > v;
-  {
-    const boost::shared_ptr<const Question> q {
-      new MultipleChoiceQuestion("-,1+1=,2,1,3")
-    };
-    v.push_back(q);
-  }
-  {
-    const auto q = OpenQuestionFactory().Create("-,1+1=,2/Two/two");
-    //const boost::shared_ptr<const Question> q {
-    //  new OpenQuestion("-,1+1=,2/Two/two")
-    //};
-    v.push_back(q);
-  }
-  const boost::shared_ptr<const HometrainerMainDialog> dialog {
-    new HometrainerMainDialog(v)
-  };
+  std::vector<std::shared_ptr<const Question>> v;
+  v.push_back(std::make_shared<MultipleChoiceQuestion>("-,1+1=,2,1,3"));
+  v.push_back(OpenQuestionFactory().Create("-,1+1=,2/Two/two").Clone());
 
-  QtHometrainerMainDialog d(dialog);
+  //Exercise
+  {
+    const auto dialog = std::make_shared<HometrainerMainDialog>(v);
+    QtHometrainerMainDialog d(dialog);
+    assert(d.GetQuestionDialog());
+    if (auto q = dynamic_cast<QtOpenQuestionDialog*>(d.GetQuestionDialog()))
+    {
+      q->SetAnswer("2");
+      q->Submit();
+    }
+    else if (auto r = dynamic_cast<QtMultipleChoiceQuestionDialog*>(d.GetQuestionDialog()))
+    {
+      r->SelectOption(0);
+      r->Submit();
+    }
+    assert(d.GetDialog().GetNumberCorrect() + d.GetDialog().GetNumberIncorrect() == 1);
+  }
+  //Test
+  {
+    const std::string filename = "qthometrainermaindialog_test_tmp.txt";
+    HometrainerTestSession session;
+    session.m_username = "Jane Doe";
+    session.m_key = 42;
+    session.m_results_filename = filename;
+    const auto dialog = std::make_shared<HometrainerMainDialog>(v, session);
+    QtHometrainerMainDialog d(dialog);
+    for (int i = 0; i != 2; ++i)
+    {
+      if (auto q = dynamic_cast<QtOpenQuestionDialog*>(d.GetQuestionDialog()))
+      {
+        q->SetAnswer("two");
+        q->Submit();
+      }
+      else if (auto r = dynamic_cast<QtMultipleChoiceQuestionDialog*>(d.GetQuestionDialog()))
+      {
+        r->SelectOption(0);
+        r->Submit();
+      }
+      //Process the timer that sets the next question
+      QTimer::singleShot(0, [](){});
+      QCoreApplication::processEvents();
+    }
+    assert(d.GetDialog().IsDone());
+    assert(IsRegularFile(filename));
+    std::remove(filename.c_str());
+  }
 }

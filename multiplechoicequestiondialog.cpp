@@ -1,17 +1,11 @@
-
-
-
 #include "multiplechoicequestiondialog.h"
 
+#include <algorithm>
 #include <cassert>
-#include <boost/lexical_cast.hpp>
-#include <boost/scoped_ptr.hpp>
+#include <stdexcept>
 
 #include "multiplechoicequestion.h"
 #include "question.h"
-
-
-
 
 ribi::MultipleChoiceQuestionDialog::MultipleChoiceQuestionDialog(
   const MultipleChoiceQuestion& question)
@@ -30,19 +24,6 @@ ribi::MultipleChoiceQuestionDialog::MultipleChoiceQuestionDialog(const std::stri
   assert(!HasSubmitted());
 }
 
-boost::shared_ptr<ribi::MultipleChoiceQuestion>
-  ribi::MultipleChoiceQuestionDialog::CreateDefaultQuestion() noexcept
-{
-  return boost::shared_ptr<MultipleChoiceQuestion>(
-    new MultipleChoiceQuestion(
-      "*",
-      "1+2=",
-      "3",
-      {"1","2","4","5"}
-    )
-  );
-}
-
 ribi::MultipleChoiceQuestionDialog::~MultipleChoiceQuestionDialog()
 {
 
@@ -53,29 +34,36 @@ const ribi::Question& ribi::MultipleChoiceQuestionDialog::GetQuestion() const no
   return m_question;
 }
 
+void ribi::MultipleChoiceQuestionDialog::SetAnswerInProgress(const int index) noexcept
+{
+  m_answer_in_progress = index;
+}
+
 void ribi::MultipleChoiceQuestionDialog::Submit(const std::string& s)
 {
   if (HasSubmitted())
   {
     throw std::logic_error("Cannot submit a second answer");
   }
-  assert(!HasSubmitted());
+  int index = -1;
   try
   {
-    const auto index = boost::lexical_cast<size_t>(s);
-    const auto sz = GetMultipleChoiceQuestion().GetOptions().size();
-    if (index >= sz)
-    {
-      throw std::logic_error("Must submit an existing index to a multiple choice question dialog");
-    }
-    //The real (that is non-index) answer
-    const std::string t = GetMultipleChoiceQuestion().GetOptions()[index];
-    this->SetIsCorrect(GetQuestion().IsCorrect(t));
+    std::size_t n_chars_read = 0;
+    index = std::stoi(s, &n_chars_read);
+    if (n_chars_read != s.size()) throw std::invalid_argument("Trailing characters");
   }
-  catch (const boost::bad_lexical_cast&)
+  catch (const std::exception&)
   {
     throw std::logic_error("Must submit an index to a multiple choice question dialog");
   }
+  const auto sz = static_cast<int>(GetMultipleChoiceQuestion().GetOptions().size());
+  if (index < 0 || index >= sz)
+  {
+    throw std::logic_error("Must submit an existing index to a multiple choice question dialog");
+  }
+  //The real (that is non-index) answer
+  const std::string& t = GetMultipleChoiceQuestion().GetOptions()[static_cast<std::size_t>(index)];
+  this->SetIsCorrect(GetQuestion().IsCorrect(t));
 }
 
 void ribi::TestMultipleChoiceQuestionDialog() noexcept
@@ -83,74 +71,57 @@ void ribi::TestMultipleChoiceQuestionDialog() noexcept
   //Test setting the multiple choice questions
   for(const std::string& s: GetValidMultipleChoiceQuestions())
   {
-    MultipleChoiceQuestion q(s);
-    MultipleChoiceQuestionDialog d(q);
-    assert(!d.HasSubmitted() );
+    const MultipleChoiceQuestion q(s);
+    const MultipleChoiceQuestionDialog d(q);
+    assert(!d.HasSubmitted());
   }
   //Test submitting correct and incorrect answers to this dialog
+  for (const std::string& s: GetValidMultipleChoiceQuestions())
   {
-    const std::vector<std::string> valid {
-      GetValidMultipleChoiceQuestions()
-    };
-    for (const std::string& s: valid)
+    const MultipleChoiceQuestion question(s);
+    const std::vector<std::string>& options = question.GetOptions();
+
+    //Submit correct answer to this dialog
     {
-      //Create a question
-      const MultipleChoiceQuestion question(s);
-
-      //Obtain the shuffled possibilities
-      const std::vector<std::string> options = question.GetOptions();
-      assert(options == question.GetOptions()
-        && "The possibilities must be shuffled exactly once");
-
-      //Submit correct answer to this dialog
+      MultipleChoiceQuestionDialog dialog(question);
+      const auto index = std::distance(options.begin(),std::find(options.begin(),options.end(),question.GetAnswer()));
+      assert(index < static_cast<int>(options.size()));
+      dialog.Submit(std::to_string(index));
+      assert(dialog.HasSubmitted());
+      assert(dialog.IsAnswerCorrect());
+    }
+    //Submit incorrect answer to this dialog
+    {
+      MultipleChoiceQuestionDialog dialog(question);
+      const std::string wrong_answer = question.GetWrongAnswers().at(0);
+      if (wrong_answer == question.GetAnswer()) continue;
+      const auto index = std::distance(options.begin(),std::find(options.begin(),options.end(),wrong_answer));
+      assert(index < static_cast<int>(options.size()));
+      dialog.Submit(std::to_string(index));
+      assert(dialog.HasSubmitted());
+      assert(!dialog.IsAnswerCorrect());
+    }
+  }
+  //Invalid submissions
+  {
+    MultipleChoiceQuestionDialog dialog("-,1+1=,2,3");
+    for (const std::string s: { "", "two", "-1", "2", "1x" })
+    {
+      try
       {
-        boost::scoped_ptr<MultipleChoiceQuestionDialog> dialog {
-          new MultipleChoiceQuestionDialog(
-            question
-          )
-        };
-        assert(!dialog->HasSubmitted());
-
-        const std::string answer = question.GetAnswer();
-        assert(!question.GetWrongAnswers().empty());
-
-        const auto index = std::distance(options.begin(),std::find(options.begin(),options.end(),answer));
-        assert(index >= 0);
-        assert(index < static_cast<int>(options.size()));
-
-        dialog->Submit(boost::lexical_cast<std::string>(index));
-
-        assert(dialog->HasSubmitted());
-        assert(dialog->IsAnswerCorrect());
+        dialog.Submit(s);
+        assert(!"Should not get here");
       }
-      //Submit incorrect answer to this dialog
+      catch (std::logic_error&)
       {
-        boost::scoped_ptr<MultipleChoiceQuestionDialog> dialog {
-          new MultipleChoiceQuestionDialog(
-            question
-          )
-        };
-        assert(!dialog->HasSubmitted());
-
-        assert(!question.GetWrongAnswers().empty());
-        const std::string wrong_answer = question.GetWrongAnswers().at(0);
-
-        const int index = std::distance(options.begin(),std::find(options.begin(),options.end(),wrong_answer));
-        assert(index >= 0);
-        assert(index < static_cast<int>(options.size()));
-
-        dialog->Submit(boost::lexical_cast<std::string>(index));
-
-        assert(dialog->HasSubmitted());
-        assert(!dialog->IsAnswerCorrect());
+        //OK
       }
     }
+    assert(!dialog.HasSubmitted());
   }
 }
 
 std::string ribi::MultipleChoiceQuestionDialog::ToStr() const noexcept
 {
-  std::stringstream s;
-  s << m_question.ToStr();
-  return s.str();
+  return m_question.ToStr();
 }

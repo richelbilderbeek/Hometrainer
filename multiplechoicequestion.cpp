@@ -1,45 +1,50 @@
-
-
-
 #include "multiplechoicequestion.h"
 
 #include <algorithm>
 #include <cassert>
 #include <sstream>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/scoped_ptr.hpp>
+#include <stdexcept>
 
-#include "container.h"
-#include "fileio.h"
-#include "imagecanvas.h"
+#include "hometrainerhelper.h"
 
+namespace ribi {
 
-
-
-ribi::MultipleChoiceQuestion::MultipleChoiceQuestion(const std::string& question)
-  : Question(
-      Container().SeperateString(question,',').at(0),
-      Container().SeperateString(question,',').at(1),
-      { Container().SeperateString(question,',').at(2) }),
-    m_wrong_answers(ExtractMcqWrongAnswers(question)),
-    m_options(ExtractMcqOptions(question))
+///Split a multiple choice question into its fields, checking it on the way.
+///Throws std::logic_error if the question is invalid
+std::vector<std::string> SeperateMcq(const std::string& question)
 {
   if (question.empty())
   {
     throw std::logic_error("A multiple choice question must contain text");
   }
-  if (question[0] == ',')
+  const auto v = SeperateHometrainerLine(question);
+  if (v.size() < 4)
   {
-    throw std::logic_error("A multiple choice question must not start with a comma");
+    throw std::logic_error(
+      "A multiple choice question must contain at least four elements:"
+      "[0] image,"
+      "[1] question,"
+      "[2] answer,"
+      "[3-x] incorrect answers");
   }
-  if (question[question.size() - 1] == ',')
+  if (std::find(v.begin(), v.end(), "") != v.end())
   {
-    throw std::logic_error("A multiple choice question must not end with a comma");
+    throw std::logic_error("A multiple choice question cannot have empty elements");
   }
-  if (question.find(",,") != std::string::npos)
-  {
-    throw std::logic_error("A multiple choice question cannot contain two consecutive commas");
-  }
+  return v;
+}
+
+} //~namespace ribi
+
+ribi::MultipleChoiceQuestion::MultipleChoiceQuestion(const std::string& question)
+  : MultipleChoiceQuestion(
+      SeperateMcq(question).at(0),
+      SeperateMcq(question).at(1),
+      SeperateMcq(question).at(2),
+      ExtractMcqWrongAnswers(question)
+    )
+{
+
 }
 
 ribi::MultipleChoiceQuestion::MultipleChoiceQuestion(
@@ -51,25 +56,17 @@ ribi::MultipleChoiceQuestion::MultipleChoiceQuestion(
   m_wrong_answers(wrong_answers),
   m_options(CreateMcqOptions(wrong_answers,answer))
 {
-  //assert(!filename.empty() && "Filename must not be empty");
-  //assert(FileExists(filename) == true && "File must exists");
-  //assert(!question.empty() && "MultipleChoiceQuestion must not be empty");
-  //assert(!correct_answer.empty() && "Correct answer must not be empty");
   if (this->GetWrongAnswers().empty())
   {
     throw std::logic_error("a MultipleChoiceQuestion must have at least one incorrect option");
   }
-
   assert(!GetCorrectAnswers().empty() && "There must be a correct answer");
   assert(!GetWrongAnswers().empty() && "Wrong answers must not be empty");
-
-  //Why did I put this max here? I think this is something that might be constrained by a GUI only
-  //assert(wrong_answers.size() <= 5 && "There is a maximum of five wrong answers");
 }
 
-ribi::Question * ribi::MultipleChoiceQuestion::Clone() const noexcept
+std::unique_ptr<ribi::Question> ribi::MultipleChoiceQuestion::Clone() const
 {
-  return new MultipleChoiceQuestion(
+  return std::make_unique<MultipleChoiceQuestion>(
     this->GetFilename(),
     this->GetQuestion(),
     this->GetAnswer(),
@@ -88,34 +85,14 @@ std::vector<std::string> ribi::CreateMcqOptions(
 {
   std::vector<std::string> v = wrong_answers;
   v.push_back(answer);
-  std::random_shuffle(std::begin(v),std::end(v));
+  std::shuffle(std::begin(v),std::end(v), GetRng());
   return v;
-}
-
-std::vector<std::string> ribi::ExtractMcqOptions(const std::string& input)
-{
-  const auto v = Container().SeperateString(input,',');
-  std::vector<std::string> w;
-  std::copy(v.begin() + 2,v.end(),std::back_inserter(w));
-  std::random_shuffle(w.begin(),w.end());
-  return w;
 }
 
 std::vector<std::string> ribi::ExtractMcqWrongAnswers(const std::string& input)
 {
-  const auto v = Container().SeperateString(input,',');
-  if (v.size() < 4)
-  {
-    throw std::logic_error(
-      "A multiple choice question must contain at least four elements:"
-      "[0] image,"
-      "[1] question,"
-      "[2] answer,"
-      "[3-x] incorrect answers");
-  }
-  std::vector<std::string> w;
-  std::copy(v.begin() + 3,v.end(),std::back_inserter(w));
-  return w;
+  const auto v = SeperateMcq(input);
+  return std::vector<std::string>(v.begin() + 3, v.end());
 }
 
 std::vector<std::string> ribi::GetInvalidMultipleChoiceQuestions() noexcept
@@ -156,71 +133,56 @@ std::vector<std::string> ribi::GetValidMultipleChoiceQuestions() noexcept
   return {
     "-,1+1=,2,1",
     "tmp.png,1+1=,2,1",
-    "-,1+1=,2,1,0,3,4,5,6,7,8,9,0"
+    "-,1+1=,2,1,0,3,4,5,6,7,8,9,0",
+    "-,1\\,5 + 1\\,5 =,3,2\\,5,3\\,5"
   };
 }
 
 std::string ribi::MultipleChoiceQuestion::GetVersion() noexcept
 {
-  return "1.2";
+  return "1.3";
 }
 
 std::vector<std::string> ribi::MultipleChoiceQuestion::GetVersionHistory() noexcept
 {
   return {
     "2011-06-27: version 1.0: initial version",
-    "2011-09-16: version 1.1: allow parsing from std::string"
-    "2013-09-26: version 1.2: added testing"
+    "2011-09-16: version 1.1: allow parsing from std::string",
+    "2013-09-26: version 1.2: added testing",
+    "2026-11-24: version 1.3: allow escaped commas"
   };
 }
 
 void ribi::TestMultipleChoiceQuestion() noexcept
 {
-  try
+  //The example must be valid
   {
-    const boost::scoped_ptr<MultipleChoiceQuestion> q {
-      new MultipleChoiceQuestion(
-        MultipleChoiceQuestion::GetExampleMultipleChoiceQuestion()
-      )
-    };
-    assert(q);
-  }
-  catch (std::exception& e)
-  {
-    assert("MultipleChoiceQuestion::GetExampleMultipleChoiceQuestion()"
-        && "must yield a valid MultipleChoiceQuestion");
+    const MultipleChoiceQuestion q(MultipleChoiceQuestion::GetExampleMultipleChoiceQuestion());
+    assert(q.IsCorrect("2"));
   }
   //Test valid multiple choice questions for validity
+  for (const std::string& s: GetValidMultipleChoiceQuestions())
   {
-    const std::vector<std::string> valid { GetValidMultipleChoiceQuestions() };
-    for (const std::string& s: valid)
+    try
     {
-      try
-      {
-        boost::scoped_ptr<MultipleChoiceQuestion> q { new MultipleChoiceQuestion(s) };
-        assert(q); //To make the compiler happy
-        //OK
-      }
-      catch (std::exception& e)
-      {
-        assert(!"Valid questions must be accepted");
-      }
+      const MultipleChoiceQuestion q(s);
+    }
+    catch (std::exception&)
+    {
+      assert(!"Valid questions must be accepted");
     }
   }
   //Test invalid multiple choice questions for invalidity
+  for (const std::string& s: GetInvalidMultipleChoiceQuestions())
   {
-    const std::vector<std::string> invalid { GetInvalidMultipleChoiceQuestions()  };
-    for (const std::string& s: invalid)
+    try
     {
-      try
-      {
-        const boost::scoped_ptr<MultipleChoiceQuestion> q { new MultipleChoiceQuestion(s) };
-        assert(!"Invalid questions must be rejected");
-      }
-      catch (std::exception& e)
-      {
-        //OK
-      }
+      const MultipleChoiceQuestion q(s);
+      assert(!"Invalid questions must be rejected");
+    }
+    catch (std::exception&)
+    {
+      //OK
     }
   }
   //Test simple get/set
@@ -229,35 +191,28 @@ void ribi::TestMultipleChoiceQuestion() noexcept
     const std::string question = "1+1=";
     const std::string answer = "2";
     const std::vector<std::string> wrong_answers { "chicken", "cow" };
-    const boost::scoped_ptr<MultipleChoiceQuestion> q { new MultipleChoiceQuestion(filename,question,answer,wrong_answers) };
-    assert(q->GetFilename() == filename);
-    assert(q->GetQuestion() == question);
-    assert(q->GetAnswer() == answer);
-    assert(q->GetWrongAnswers() == wrong_answers);
-    assert(q->GetOptions().size() == wrong_answers.size() + 1); //The options are the incorrect answers and the correct answer(s)
-    assert(q->IsCorrect(answer));
-    assert(!q->IsCorrect(wrong_answers.at(0)));
-    assert(!q->IsCorrect(wrong_answers.at(1)));
+    const MultipleChoiceQuestion q(filename,question,answer,wrong_answers);
+    assert(q.GetFilename() == filename);
+    assert(q.GetQuestion() == question);
+    assert(q.GetAnswer() == answer);
+    assert(q.GetWrongAnswers() == wrong_answers);
+    assert(q.GetOptions().size() == wrong_answers.size() + 1); //The options are the incorrect answers and the correct answer(s)
+    assert(q.IsCorrect(answer));
+    assert(!q.IsCorrect(wrong_answers.at(0)));
+    assert(!q.IsCorrect(wrong_answers.at(1)));
   }
   //Test conversion std::string to MultipleChoiceQuestion and back
+  for (const std::string& s: GetValidMultipleChoiceQuestions())
   {
-    const std::vector<std::string> valid { GetValidMultipleChoiceQuestions() };
-    for (const std::string& s: valid)
-    {
-      const boost::scoped_ptr<MultipleChoiceQuestion> q { new MultipleChoiceQuestion(s) };
-      assert(s == q->ToStr());
-    }
+    const MultipleChoiceQuestion q(s);
+    assert(s == q.ToStr());
+    assert(s == q.Clone()->ToStr());
   }
   //Test that ToLines always yields the same result
+  for (const std::string& s: GetValidMultipleChoiceQuestions())
   {
-    const std::vector<std::string> valid { GetValidMultipleChoiceQuestions() };
-    for (const std::string& s: valid)
-    {
-      const boost::scoped_ptr<MultipleChoiceQuestion> q { new MultipleChoiceQuestion(s) };
-      const std::vector<std::string> v { q->ToLines() };
-      const std::vector<std::string> w { q->ToLines() };
-      assert(v == w);
-    }
+    const MultipleChoiceQuestion q(s);
+    assert(q.ToLines() == q.ToLines());
   }
 }
 
@@ -266,10 +221,8 @@ std::vector<std::string> ribi::MultipleChoiceQuestion::ToLines() const noexcept
   std::vector<std::string> question_lines;
   question_lines.push_back(this->GetQuestion());
   question_lines.push_back("");
-  const std::vector<std::string> w { this->GetOptions() };
-
   int i=0;
-  for (const std::string& s: w)
+  for (const std::string& s: GetOptions())
   {
     std::stringstream t;
     t << '[' << i << "] " << s;
@@ -279,30 +232,12 @@ std::vector<std::string> ribi::MultipleChoiceQuestion::ToLines() const noexcept
 
   const int screen_rows { 23 };
   const int question_rows { static_cast<int>(question_lines.size()) };
-  const int n_rows { screen_rows - question_rows };
+  const int n_rows { std::max(1, screen_rows - question_rows) };
 
   std::vector<std::string> lines;
-
-  if (!GetFilename().empty())
+  if (HasImage())
   {
-    int n_cols = 78;
-
-    while (1)
-    {
-      const boost::shared_ptr<ImageCanvas> canvas {
-        new ImageCanvas(GetFilename(),n_cols)
-      };
-      if (canvas->GetHeight() > n_rows)
-      {
-        --n_cols;
-      }
-      else
-      {
-        lines = canvas->ToStrings();
-        break;
-      }
-      if (n_cols == 5) break;
-    }
+    lines = ImageToAsciiArt(GetFilename(), 78, n_rows);
   }
   std::copy(question_lines.begin(),question_lines.end(),std::back_inserter(lines));
   return lines;
@@ -310,21 +245,10 @@ std::vector<std::string> ribi::MultipleChoiceQuestion::ToLines() const noexcept
 
 std::string ribi::MultipleChoiceQuestion::ToStr() const noexcept
 {
-  //Concatenate the correct answer
-  assert(!this->GetCorrectAnswers().empty());
-  std::string correct_answers_str;
-  for (const std::string s: this->GetCorrectAnswers()) { correct_answers_str += s + "/"; }
-  assert(!correct_answers_str.empty());
-  correct_answers_str.resize(correct_answers_str.size() - 1);
-
   std::string s
-    = this->GetFilename()
-    + "," + this->GetQuestion()
-    + "," + correct_answers_str
-    + ",";
-  for (const std::string t: this->GetWrongAnswers()) { s += t + ","; }
-  //Remove tailing comma
-  assert(!s.empty());
-  s.resize(s.size() - 1);
+    = EscapeHometrainerField(this->GetFilename())
+    + "," + EscapeHometrainerField(this->GetQuestion())
+    + "," + EscapeHometrainerField(this->GetAnswer());
+  for (const std::string& t: this->GetWrongAnswers()) { s += "," + EscapeHometrainerField(t); }
   return s;
 }

@@ -2,22 +2,18 @@
 
 #include <algorithm>
 #include <cassert>
-#include <ctime>
-#include <fstream>
+#include <cstdio>
 #include <iostream>
+#include <sstream>
 #include <stdexcept>
 
-#include "fileio.h"
-#include "openquestion.h"
-#include "openquestionfactory.h"
-#include "openquestiondialog.h"
-#include "openquestiondialogfactory.h"
-#include "questiondialog.h"
+#include "hometrainerhelper.h"
 #include "multiplechoicequestion.h"
 #include "multiplechoicequestiondialog.h"
-
-
-
+#include "openquestion.h"
+#include "openquestiondialog.h"
+#include "openquestionfactory.h"
+#include "questiondialog.h"
 
 ribi::HometrainerMainDialog::HometrainerMainDialog(
   const std::string& filename)
@@ -27,198 +23,185 @@ ribi::HometrainerMainDialog::HometrainerMainDialog(
 }
 
 ribi::HometrainerMainDialog::HometrainerMainDialog(
-  const std::vector<ribi::Question>& questions)
+  const std::vector<std::shared_ptr<const Question>>& questions,
+  const std::optional<HometrainerTestSession>& test_session)
   : m_current_question_index(0),
     m_n_correct(0),
     m_n_incorrect(0),
-    m_question_dialog{},
     m_questions(questions),
-    m_quit(false)
-
+    m_test_results{},
+    m_test_session{test_session}
 {
   if (m_questions.empty())
   {
     throw std::logic_error("HometrainerMainDialog: no valid question");
   }
-
-  #ifdef NDEBUG
-  //Only randomize in release mode
-  std::srand(std::time(0));
-  #endif
-
-  std::random_shuffle(m_questions.begin(),m_questions.end());
-}
-
-std::unique_ptr<ribi::Question> ribi::CreateQuestion(
-  const std::string& s
-) noexcept
-{
-  try
+  if (m_test_session)
   {
-    auto q = std::make_unique<OpenQuestion>(s);
-    assert(q);
-    return std::move(q);
+    m_test_results = HometrainerTestResults(m_test_session->m_username);
+    //Save the empty results directly, so that it is known the student started
+    SaveTestResults();
   }
-  catch (std::exception&)
-  {
-    //Question could not be parsed
-  }
-  try
-  {
-    auto q = std::make_unique<MultipleChoiceQuestion>(s);
-    assert(q);
-    return std::move(q);
-  }
-  catch (std::exception&)
-  {
-    //Question could not be parsed
-  }
-  std::unique_ptr<Question> q;
-  assert(!q);
-  return q;
+  std::shuffle(m_questions.begin(),m_questions.end(), GetRng());
 }
 
 std::unique_ptr<ribi::QuestionDialog> ribi::CreateQuestionDialog(
-  const Question& question) noexcept
+  const Question& question)
 {
-  //Open q
-  try
+  if (const auto q = dynamic_cast<const OpenQuestion*>(&question))
   {
-    auto d = std::make_unique<OpenQuestionDialog>(question.ToStr());
-    if (d) return std::move(d);
+    return std::make_unique<OpenQuestionDialog>(*q);
   }
-  catch (const std::logic_error&)
+  if (const auto q = dynamic_cast<const MultipleChoiceQuestion*>(&question))
   {
-    //OK
+    return std::make_unique<MultipleChoiceQuestionDialog>(*q);
   }
-  {
-    auto d = std::make_unique<MultipleChoiceQuestionDialog>(question.ToStr());
-    if (d) return std::move(d);
-  }
-  assert(false);
-  return {};
+  throw std::logic_error("CreateQuestionDialog: unknown question type");
 }
-
-std::vector<boost::shared_ptr<const ribi::Question> >
-  ribi::CreateQuestions(
-    const std::string& filename)
-{
-  if (!fileio::FileIo().IsRegularFile(filename))
-  {
-    throw std::logic_error("HometrainerMainDialog: no valid file");
-  }
-  const std::vector<std::string> text { fileio::FileIo().FileToVector(filename) };
-
-  std::vector<boost::shared_ptr<const Question> > v;
-  for (const std::string& s: text)
-  {
-    const boost::shared_ptr<const Question> q = CreateQuestion(s);
-    //q will be nullptr if no Question could be created
-    if (q)
-    {
-      v.push_back(q);
-    }
-  }
-  return v;
-}
-
-void ribi::HometrainerMainDialog::DisplayScore() const noexcept
-{
-  const int total = m_n_correct + m_n_incorrect;
-  const double fraction_correct = static_cast<double>(m_n_correct) / static_cast<double>(total);
-  const int percentage_correct = static_cast<int>(100.0 * fraction_correct);
-
-  std::cout
-    << "Current score: "
-    << m_n_correct
-    << " / "
-    << total
-    << " ("
-    << percentage_correct
-    << "%)"
-    << '\n';
-}
-
 
 void ribi::HometrainerMainDialog::Execute()
 {
-  assert(!m_questions.empty());
-  if (m_questions.empty())
+  while (!IsDone())
   {
-    throw std::logic_error("HometrainerMainDialog: must have questions");
+    const auto dialog = CreateQuestionDialog(GetCurrentQuestion());
+    dialog->Execute(!IsTest());
+    if (!dialog->HasSubmitted())
+    {
+      //The user wants to quit
+      return;
+    }
+    RegisterAnswer(dialog->IsAnswerCorrect());
+    std::cout << GetScoreText() << '\n';
   }
-
-  while (1)
+  if (IsTest())
   {
-    ///Prepare the current question
-    assert(GetCurrentQuestion());
-    m_question_dialog = CreateQuestionDialog(GetCurrentQuestion());
-    assert(m_question_dialog);
-
-    //Interface with the user about the current question
-    //const std::string s = AskUserForInput();
-    //Submit(s);
-    //DisplayScore();
-    m_question_dialog->Execute();
-
-    DisplayScore();
-
-    if (m_quit) return;
-
-    ///Set up a next question
-    NewQuestion();
+    std::cout << "Test done. Results are saved to '"
+      << m_test_session->m_results_filename << "'\n";
   }
 }
 
-boost::shared_ptr<const ribi::Question> ribi::HometrainerMainDialog::GetCurrentQuestion() const noexcept
+const ribi::Question& ribi::HometrainerMainDialog::GetCurrentQuestion() const noexcept
 {
+  assert(m_current_question_index >= 0);
   assert(m_current_question_index < static_cast<int>(GetQuestions().size()));
-  const boost::shared_ptr<const ribi::Question> question {
-    GetQuestions()[static_cast<size_t>(m_current_question_index)]
-  };
-  assert(question);
-  return question;
+  return *GetQuestions()[static_cast<std::size_t>(m_current_question_index)];
 }
 
+std::string ribi::HometrainerMainDialog::GetScoreText() const noexcept
+{
+  std::stringstream s;
+  const int n_answered = m_n_correct + m_n_incorrect;
+  if (IsTest())
+  {
+    s << "Answered " << n_answered << " of " << GetNumberOfQuestions() << " questions.";
+    return s.str();
+  }
+  const int percentage = n_answered == 0 ? 0 : (100 * m_n_correct) / n_answered;
+  s << "Correct: " << m_n_correct
+    << ", incorrect: " << m_n_incorrect
+    << ", score: " << percentage << "%";
+  return s.str();
+}
+
+bool ribi::HometrainerMainDialog::IsDone() const noexcept
+{
+  return IsTest() && m_n_correct + m_n_incorrect == GetNumberOfQuestions();
+}
 
 void ribi::HometrainerMainDialog::NewQuestion()
 {
   ++m_current_question_index;
   if (m_current_question_index == static_cast<int>(m_questions.size()))
   {
-    std::random_shuffle(m_questions.begin(),m_questions.end());
+    //In a test, stay at the last question
+    if (IsTest())
+    {
+      --m_current_question_index;
+      return;
+    }
+    std::shuffle(m_questions.begin(),m_questions.end(), GetRng());
     m_current_question_index = 0;
   }
   assert(m_current_question_index < static_cast<int>(m_questions.size()));
 }
 
-void ribi::HometrainerMainDialog::OnRequestQuit() noexcept
+void ribi::HometrainerMainDialog::RegisterAnswer(const bool is_correct)
 {
-  m_quit = true;
+  if (IsDone())
+  {
+    throw std::logic_error("Cannot answer questions when the test is done");
+  }
+  if (is_correct) ++m_n_correct; else ++m_n_incorrect;
+  if (m_test_results)
+  {
+    m_test_results->Add(GetCurrentQuestion(), is_correct);
+    SaveTestResults();
+  }
+  NewQuestion();
 }
 
-void ribi::HometrainerMainDialog::OnSubmitted(const bool is_correct) noexcept
+void ribi::HometrainerMainDialog::SaveTestResults() const
 {
-  if (is_correct) ++m_n_correct; else ++m_n_incorrect;
+  assert(m_test_results);
+  assert(m_test_session);
+  SaveContainer(
+    m_test_results->ToEncryptedLines(m_test_session->m_key),
+    m_test_session->m_results_filename
+  );
 }
 
 void ribi::HometrainerMainDialog::Submit(const std::string& answer_from_user)
 {
-  const bool is_correct = this->GetCurrentQuestion()->IsCorrect(answer_from_user);
-  if (is_correct) ++m_n_correct; else ++m_n_incorrect;
-  NewQuestion();
+  RegisterAnswer(GetCurrentQuestion().IsCorrect(answer_from_user));
 }
 
 void ribi::TestHometrainerMainDialog() noexcept
 {
+  std::vector<std::shared_ptr<const Question>> questions;
   for(const std::string& s: OpenQuestionFactory().GetValidOpenQuestionStrings())
   {
-    assert(CreateQuestion(s));
-    assert(CreateQuestionDialog(CreateQuestion(s)));
+    const std::shared_ptr<const Question> q = CreateQuestion(s);
+    assert(q);
+    assert(CreateQuestionDialog(*q));
+    questions.push_back(q);
   }
   for(const std::string& s: GetValidMultipleChoiceQuestions())
   {
-    assert(CreateQuestion(s));
-    assert(CreateQuestionDialog(CreateQuestion(s)));
+    const std::shared_ptr<const Question> q = CreateQuestion(s);
+    assert(q);
+    assert(CreateQuestionDialog(*q));
+    questions.push_back(q);
+  }
+  //An exercise is never done
+  {
+    HometrainerMainDialog d(questions);
+    assert(!d.IsTest());
+    for (int i = 0; i != 3 * d.GetNumberOfQuestions(); ++i)
+    {
+      d.RegisterAnswer(i % 2 == 0);
+      assert(!d.IsDone());
+    }
+    assert(d.GetNumberCorrect() + d.GetNumberIncorrect() == 3 * d.GetNumberOfQuestions());
+  }
+  //A test is done after all questions are answered
+  {
+    const std::string filename = "hometrainer_test_results_tmp.txt";
+    HometrainerTestSession session;
+    session.m_username = "John Doe";
+    session.m_key = 42;
+    session.m_results_filename = filename;
+    HometrainerMainDialog d(questions, session);
+    assert(d.IsTest());
+    assert(IsRegularFile(filename));
+    for (int i = 0; i != d.GetNumberOfQuestions(); ++i)
+    {
+      assert(!d.IsDone());
+      d.Submit(d.GetCurrentQuestion().GetCorrectAnswers()[0]);
+    }
+    assert(d.IsDone());
+    assert(d.GetNumberCorrect() == d.GetNumberOfQuestions());
+    const auto lines = DecryptTestResults(FileToVector(filename), 42);
+    assert(static_cast<int>(lines.size()) == d.GetNumberOfQuestions() + 1);
+    std::remove(filename.c_str());
   }
 }

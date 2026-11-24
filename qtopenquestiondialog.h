@@ -1,11 +1,8 @@
 #ifndef QTOPENQUESTIONDIALOG_H
 #define QTOPENQUESTIONDIALOG_H
 
-#include "qthideandshowdialog.h"
-
-#include "questiondialog.h"
+#include "openquestiondialog.h"
 #include "qtquestiondialog.h"
-
 
 namespace Ui {
   class QtOpenQuestionDialog;
@@ -13,45 +10,38 @@ namespace Ui {
 
 namespace ribi {
 
-struct Question;
-struct OpenQuestion;
-struct OpenQuestionDialog;
-
+///Qt dialog for an OpenQuestion
 class QtOpenQuestionDialog : public QtQuestionDialog
 {
   Q_OBJECT
 
 public:
-  explicit QtOpenQuestionDialog(QWidget *parent = 0);
-  ///Will throw if the QuestionDialog is not an OpenQuestionDialog
-  //explicit QtOpenQuestionDialog(QWidget *parent = 0);
+  explicit QtOpenQuestionDialog(
+    const OpenQuestion& open_question,
+    QWidget *parent = nullptr
+  );
   QtOpenQuestionDialog(const QtOpenQuestionDialog&) = delete;
   QtOpenQuestionDialog& operator=(const QtOpenQuestionDialog&) = delete;
   ~QtOpenQuestionDialog() noexcept;
 
-  boost::shared_ptr<const QuestionDialog> GetDialog() const;
-  void SetDialog(const boost::shared_ptr<QuestionDialog>& dialog);
+  const QuestionDialog& GetDialog() const noexcept override { return m_dialog; }
 
-  void SetOpenQuestionDialog(const boost::shared_ptr<OpenQuestionDialog>& dialog) noexcept;
+  ///Set the answer, as if the user typed it
+  void SetAnswer(const std::string& answer);
 
-
-  static std::string GetVersion() noexcept;
-  static std::vector<std::string> GetVersionHistory() noexcept;
+  ///Submit the answer, as if the user clicked the submit button
+  void Submit();
 
 private slots:
   void on_button_submit_clicked() noexcept;
-
   void on_edit_answer_textChanged(const QString &arg1);
 
 private:
   Ui::QtOpenQuestionDialog *ui;
-  boost::shared_ptr<OpenQuestionDialog> m_openquestiondialog;
-
-  void OnOpenQuestionDialogChanged(OpenQuestionDialog * const open_question_dialog) noexcept;
-  void OnOpenQuestionChanged(const boost::shared_ptr<OpenQuestion>& open_question) noexcept;
-  void OnQuit() noexcept;
-  void OnSubmit(const bool was_answer_correct) noexcept;
+  OpenQuestionDialog m_dialog;
 };
+
+void TestQtOpenQuestionDialog() noexcept;
 
 } //~namespace ribi
 

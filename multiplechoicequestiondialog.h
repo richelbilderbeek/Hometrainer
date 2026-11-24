@@ -6,28 +6,24 @@
 
 namespace ribi {
 
-struct MultipleChoiceQuestion;
-struct Question;
-
 struct MultipleChoiceQuestionDialog final : public QuestionDialog
 {
+  ///Throws std::logic_error if the std::string is no multiple choice question
   explicit MultipleChoiceQuestionDialog(const std::string& question);
 
-  ///Will work if question is not nullptr
   explicit MultipleChoiceQuestionDialog(const MultipleChoiceQuestion& question);
 
   virtual ~MultipleChoiceQuestionDialog() override;
 
-  ///The answer the user has typed in so far
+  ///The index of the answer the user has selected so far,
+  ///is -1 if nothing has been selected yet
   int GetAnswerInProgress() const noexcept { return m_answer_in_progress; }
 
-  const auto& GetMultipleChoiceQuestion() const noexcept { return m_question; }
+  const MultipleChoiceQuestion& GetMultipleChoiceQuestion() const noexcept { return m_question; }
 
   const Question& GetQuestion() const noexcept override;
 
-  ///The answer the user has selected
-  ///Used for synching between multiple QtMultipleChoiceQuestionDialogs displaying
-  ///the same MultipleChoiceQuestionDialog
+  ///The index of the answer the user has selected
   void SetAnswerInProgress(const int index) noexcept;
 
   ///Submit an answer
@@ -39,11 +35,7 @@ struct MultipleChoiceQuestionDialog final : public QuestionDialog
   private:
   int m_answer_in_progress;
 
-  const MultipleChoiceQuestion m_question;
-
-  ///Create a default Question
-  static std::shared_ptr<MultipleChoiceQuestion> CreateDefaultQuestion() noexcept;
-
+  MultipleChoiceQuestion m_question;
 };
 
 void TestMultipleChoiceQuestionDialog() noexcept;

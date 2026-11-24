@@ -6,12 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>428</width>
-    <height>464</height>
+    <width>640</width>
+    <height>720</height>
    </rect>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>14</pointsize>
+   </font>
   </property>
   <property name="windowTitle">
    <string>Hometrainer</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="ToolHometrainer.qrc">
+    <normaloff>:/resources/ToolHometrainerQuestionmark.png</normaloff>:/resources/ToolHometrainerQuestionmark.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -24,23 +33,43 @@
        <rect>
         <x>0</x>
         <y>0</y>
-        <width>408</width>
-        <height>425</height>
+        <width>620</width>
+        <height>560</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3"/>
+      <layout class="QVBoxLayout" name="layout_contents"/>
      </widget>
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="label_score">
-     <property name="text">
-      <string>Question x/n, correct: #, incorrect: #</string>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="layout_bottom">
+     <item>
+      <widget class="QLabel" name="label_score">
+       <property name="text">
+        <string>Correct: 0, incorrect: 0, score: 0%</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_next">
+       <property name="text">
+        <string>Next question</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="button_quit">
+       <property name="text">
+        <string>Quit</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="ToolHometrainer.qrc"/>
+ </resources>
  <connections/>
 </ui>
