@@ -2,7 +2,7 @@
 site_name = "Hometrainer"
 site_url = "https://richelbilderbeek.github.io/Hometrainer/"
 repo_url = "https://github.com/richelbilderbeek/Hometrainer"
-edit_uri = "blob/master/docs/"
+edit_uri = "blob/main/docs/"
 
 nav = [
   { "Start" = "README.md"},

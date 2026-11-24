@@ -21,7 +21,7 @@ Hometrainer can:
 
 - [Download the Windows version](https://richelbilderbeek.github.io/Hometrainer/hometrainer_windows.zip):
   unzip it and run `ToolHometrainerDesktop.exe`
-- [Example exercises](https://github.com/richelbilderbeek/Hometrainer/tree/master/examples),
+- [Example exercises](https://github.com/richelbilderbeek/Hometrainer/tree/main/examples),
   or click 'Create example exercises' in the main menu
 - Linux and macOS: [build Hometrainer from source](build.md)
 

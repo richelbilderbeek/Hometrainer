@@ -1,6 +1,6 @@
 # Hometrainer
 
-[![Build](https://github.com/richelbilderbeek/Hometrainer/actions/workflows/build.yaml/badge.svg?branch=master)](https://github.com/richelbilderbeek/Hometrainer/actions/workflows/build.yaml)
+[![Build](https://github.com/richelbilderbeek/Hometrainer/actions/workflows/build.yaml/badge.svg?branch=main)](https://github.com/richelbilderbeek/Hometrainer/actions/workflows/build.yaml)
 
 Hometrainer is a free suite to create exercises and tests,
 to practice these, to examine with these and to grade these.
