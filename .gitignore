@@ -50,3 +50,5 @@ release/
 run_page.png
 /site/
 wordlist.dic
+coverage/
+build_*/

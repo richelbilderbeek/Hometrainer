@@ -1,5 +1,7 @@
 # Hometrainer
 
+[![Codecov](https://codecov.io/gh/richelbilderbeek/Hometrainer/branch/main/graph/badge.svg)](https://codecov.io/gh/richelbilderbeek/Hometrainer)
+
 [![Build](https://github.com/richelbilderbeek/Hometrainer/actions/workflows/build.yaml/badge.svg?branch=main)](https://github.com/richelbilderbeek/Hometrainer/actions/workflows/build.yaml)
 
 Hometrainer is a free suite to create exercises and tests,
